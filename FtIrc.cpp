@@ -107,8 +107,7 @@ FtIrc::FtIrc(std::string port, std::string password) {
 	struct sockaddr_storage cAddr;
 	int newFd;
 	char remoteIP[INET6_ADDRSTRLEN];
-	char buf[512];
-	std::memset(&buf, 0, sizeof buf);
+	bool flag;
 	while (1) {
 		int pcount = poll(pfds.data(), pfds.size(), -1);
 		if (pcount == -1)
@@ -130,48 +129,30 @@ FtIrc::FtIrc(std::string port, std::string password) {
 						std::exit(1);
 					}
 					else {
+						Client cObj;
 						addToPfds(newFd);
+						cObjs.push_back(cObj);
 						std::cout << "pollserver: new connection from " << inet_ntop(cAddr.ss_family, 
 							getAddr((struct sockaddr*)&cAddr), remoteIP, INET6_ADDRSTRLEN)
 							<< " on socket " << newFd << std::endl;
 					}
 				}
 				else {
-					int nbyte = recv(pfds[i].fd, buf, sizeof buf, 0);
-					int clientFd = pfds[i].fd;
-					if (nbyte <= 0) {
-						if (nbyte == 0)
-							std::cout << "pollserver: socket " << clientFd <<" hung up\n";
-						else {
-							std::cout << "Error in recv\n";
-							std::exit(1);
-						}
-						close(pfds[i].fd);
-						pfds.erase(pfds.begin() + i);
+					cObjs[i - 1].RecvClient(pfds[i], sockfd, flag);
+					if (flag)
+					{
+						flag = false;
+						continue;
 					}
-					else {
-						std::cout << "[" << buf[std::strlen(buf) - 1] << "]" << std::endl;
-						if (buf[std::strlen(buf) - 1] != '\n')
-						{
-							// std::cout << "hello" << std::endl;
-							std::memset(&buf, 0, sizeof buf);
-							continue;
-						}
-						std::cout << "To send: " << buf;
-						for (size_t j = 0; j < pfds.size(); j++)
-						{
-							int destFd = pfds[j].fd;
-							if (destFd != sockfd && destFd != clientFd)
-							{
-								if (send(destFd, buf, nbyte, 0) == -1)
-								{
-									std::cout << "Error in send" << std::endl;
-								}
-							}
-						}
+					if (cObjs[i - 1].error)
+					{
+						pfds.erase(pfds.begin() + i);
+						cObjs.erase(cObjs.begin() + (i - 1));
 					}
 				}
 			}
 		}
 	}
 }
+
+// PASS 123 hg jh\r\nNICK n1\r\n

@@ -9,7 +9,8 @@ RM = rm -f
 OBJF = obj
 
 SRC = main.cpp \
-	  FtIrc.cpp
+	  FtIrc.cpp \
+	  Client.cpp
 
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 
@@ -18,7 +19,7 @@ all : $(NAME)
 $(OBJF):
 	mkdir -p $(OBJF)
 
-$(OBJF)/%.o : %.cpp FtIrc.hpp | $(OBJF)
+$(OBJF)/%.o : %.cpp FtIrc.hpp Client.hpp | $(OBJF)
 	$(CPP) $(FLAGS) -c $< -o $@
 
 $(NAME) : $(OBJ)
@@ -32,4 +33,4 @@ fclean: clean
 
 re : fclean all
 
-.PHONY : clean all fclean re
+.PHONY : clean
