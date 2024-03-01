@@ -15,13 +15,15 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include "Client.hpp"
 
 class FtIrc
 {
 	private:
 		std::string port;
 		std::string password;
-		std::vector <struct pollfd > pfds;
+		std::vector <pollfd > pfds;
+		std::vector <Client > cObjs;
 	public:
 		FtIrc();
 		FtIrc(std::string port, std::string password);
