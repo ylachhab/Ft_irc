@@ -1,7 +1,15 @@
 #include "Client.hpp"
+#include "./commands/Pass.hpp"
+#include "./commands/Nick.hpp"
+#include "./commands/User.hpp"
 
 Client::Client()
 {
+	this->_authenticated = false;
+	this->_registred = false;
+	this->_pass = false;
+	this->_nick = false;
+	this->_user = false;
 }
 
 Client::Client(const Client& obj)
@@ -61,14 +69,14 @@ void Client::parceCommand() {
 		if (index != std::string::npos)
 		{
 			if (str[index] == ':')
-				PassC.push_back(str.substr(index + 1));
+				vec.push_back(str.substr(index + 1));
 			else
 			{
 				str = str.substr(index);
 				char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
 				while(split_str != NULL)
 				{
-					PassC.push_back(split_str);
+					vec.push_back(split_str);
 					split_str = std::strtok(NULL, " \t");
 				}	
 			}
@@ -80,12 +88,26 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-		// if (cmd == "PASS")
-		for(size_t i = 0; i < PassC.size(); i++)
-			std::cout << PassC[i] << "***";
-		std::cout << std::endl;
+			std::cout << "["<< cmd << "]\n";
+			std::cout << "{"<< this->password << "}\n";
+		if (cmd == "PASS")
+		{
+			std::cout << "{"<< vec[0] << "}\n";
+			Pass::executePass(vec);
+		}
+		else if (cmd == "Nick")
+			Nick::executeNick(vec);
+		else if (cmd == "User")
+			User::executeUser(vec);
+		// for(size_t i = 0; i < vec.size(); i++)
+		// 	std::cout << vec[i] << "***";
+		// std::cout << std::endl;
 		if (tmp.empty())
+		{
+			vec.erase(vec.begin(), vec.end());
 			break ;
+		}
+		vec.erase(vec.begin(), vec.end());
 	}
 }
 
@@ -111,6 +133,7 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 			flag = true;
 			return ;
 		}
+		std::cout << "|"<< this->password << "|\n";
 		parceCommand();
 		// std::cout << buffer << std::endl;
 		int destFd = pfd.fd;

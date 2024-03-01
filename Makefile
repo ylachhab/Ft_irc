@@ -8,10 +8,8 @@ RM = rm -f
 
 OBJF = obj
 
-SRC = main.cpp \
-	  FtIrc.cpp \
-	  Client.cpp
-
+SRC = $(wildcard *.cpp */*.cpp)
+HDR = $(wildcard *.hpp */*.hpp)
 OBJ = $(addprefix obj/, $(SRC:.cpp=.o))
 
 all : $(NAME)
@@ -19,15 +17,15 @@ all : $(NAME)
 $(OBJF):
 	mkdir -p $(OBJF)
 
-$(OBJF)/%.o : %.cpp FtIrc.hpp Client.hpp | $(OBJF)
+$(OBJF)/%.o : %.cpp $(HDR) | $(OBJF)
+	mkdir -p $(dir $@)
 	$(CPP) $(FLAGS) -c $< -o $@
 
 $(NAME) : $(OBJ)
 	$(CPP) $(FLAGS) $(OBJ)  -o $(NAME)
 
 clean:
-	$(RM) -rf $(OBJF)
-
+	$(RM) -rf obj
 fclean: clean
 	$(RM) $(NAME)
 

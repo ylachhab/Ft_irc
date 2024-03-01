@@ -2,15 +2,15 @@
 #define PASS_HPP
 
 
-#include "Client.hpp"
+#include "../InfoClient.hpp"
 
-class Pass : public Client
+class Pass : public InfoClient
 {
 public:
 	Pass();
 	~Pass();
 
-	void executeCmd(std::vector<std::string> &vec);
+	static void executePass(std::vector<std::string> &vec);
 };
 
 

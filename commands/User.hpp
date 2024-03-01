@@ -2,20 +2,15 @@
 #define USER_HPP
 
 
-#include "Client.hpp"
+#include "../InfoClient.hpp"
 
-class User : public Client
+class User : public InfoClient
 {
-private:
-	std::string	_userName;
-	std::string	_hostName;
 public:
 	User();
 	~User();
 
-	void executeCmd(std::vector<std::string> &vec);
-	const std::string& getUserName() const;
-	const std::string& getHostName() const;
+	static void executeUser(std::vector<std::string> &vec);
 };
 
 

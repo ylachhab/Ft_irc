@@ -4,21 +4,26 @@ Pass::Pass(){}
 
 Pass::~Pass(){}
 
-void Pass::executeCmd(std::vector<std::string> &vec)
+void Pass::executePass(std::vector<std::string> &vec)
 {
-	if (this->_registred)
+	Pass obj;
+	std::cout << obj.password <<"\n";
+	if (obj._registred)
 		std::cout << "PASS :You may not reregister\n";
 	else
 	{
 		if (vec.size() && !vec[0].empty())
 		{
-			this->_pass = true;
-			if (vec[0].compare(_rellPass) == 0)
-				this->_authenticated = true;
+			obj._pass = true;
+			if (vec[0].compare(obj.password) == 0)
+				obj._authenticated = true;
 			else
-				this->_authenticated = false;
+				obj._authenticated = false;
 		}
 		else
 			std::cerr << "PASS :Not enough parameters\n";
 	}
+	std::cout << obj._authenticated <<"\n";
+	if (obj._authenticated)
+		std::cout << "authenticated!!\n";
 }

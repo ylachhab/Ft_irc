@@ -16,17 +16,13 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include "InfoClient.hpp"
 
-class Client
+class Client : public InfoClient
 {
-	private:
+	protected:
 		std::string	buffer;
-		std::vector <std::string > PassC;
-		// std::string	_nickName;
-		// std::string	_userName;
-		// std::string	_hostName;
-		// bool		_authenticated;
-		// bool		_registed;
+		std::vector	<std::string > vec;
 	public:
 		bool error;
 		Client();
@@ -35,8 +31,6 @@ class Client
 		~Client();
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
-		//pass
-		//nick
 };
 
 #endif
