@@ -150,10 +150,8 @@ FtIrc::FtIrc(std::string port, std::string password) {
 						pfds.erase(pfds.begin() + i);
 					}
 					else {
-						std::cout << "[" << buf[std::strlen(buf) - 1] << "]" << std::endl;
 						if (buf[std::strlen(buf) - 1] != '\n')
 						{
-							// std::cout << "hello" << std::endl;
 							std::memset(&buf, 0, sizeof buf);
 							continue;
 						}
