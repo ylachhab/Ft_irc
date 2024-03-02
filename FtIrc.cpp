@@ -1,5 +1,7 @@
 #include "FtIrc.hpp"
 
+std::vector<Client> FtIrc::cObjs;
+
 FtIrc::FtIrc()
 {
 }
@@ -11,7 +13,12 @@ FtIrc::FtIrc(const FtIrc& obj)
 
 FtIrc& FtIrc::operator=(const FtIrc& obj)
 {
-	(void)obj;
+	if (this != &obj)
+	{
+		this->password = obj.password;
+		this->port = obj.port;
+		this->pfds = obj.pfds;
+	}
 	return *this;
 }
 
@@ -129,7 +136,7 @@ FtIrc::FtIrc(std::string port, std::string password) {
 					}
 					else {
 						Client cObj;
-						cObj.setPassword(this->password);//SET PASSWORD
+						cObj.setPassword(this->password);
 						addToPfds(newFd);
 						cObjs.push_back(cObj);
 						std::cout << "pollserver: new connection from " << inet_ntop(cAddr.ss_family, 
@@ -155,4 +162,3 @@ FtIrc::FtIrc(std::string port, std::string password) {
 	}
 }
 
-// PASS 123 hg jh\r\nNICK n1\r\n

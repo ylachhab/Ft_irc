@@ -1,7 +1,5 @@
 #include "Client.hpp"
-#include "./commands/Pass.hpp"
-#include "./commands/Nick.hpp"
-#include "./commands/User.hpp"
+#include "FtIrc.hpp"
 
 Client::Client()
 {
@@ -19,7 +17,23 @@ Client::Client(const Client& obj)
 
 Client& Client::operator=(const Client& obj)
 {
-	(void)obj;
+	if (this != &obj)
+	{
+		this->buffer = obj.buffer;
+		this->vec = obj.vec;
+
+		this->_authenticated = obj._authenticated;
+		this->_registred = obj._registred;
+		this->_userName = obj._userName;
+		this->_realName = obj._realName;
+		// this->_hostName = obj._hostName;
+		this->_nickName = obj._nickName;
+		this->_password = obj._password;
+		this->_port = obj._port;
+		this->_pass = obj._pass;
+		this->_user = obj._user;
+		this->_nick = obj._nick;
+	}
 	return *this;
 }
 
@@ -27,6 +41,18 @@ Client::~Client()
 {
 }
 
+/*************Getters & Setters*****************/
+const std::string& Client::getPassword() const
+{
+	return this->_password;
+}
+
+void Client::setPassword(const std::string& pass)
+{
+	this->_password = pass;
+}
+
+/**********Parce & execute Command**********/
 void Client::parceCommand() {
 	size_t found = 0;
 	while ((found = buffer.find("\n", found)) != std::string::npos)
@@ -88,20 +114,12 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-			std::cout << "["<< cmd << "]\n";
-			std::cout << "{"<< this->password << "}\n";
 		if (cmd == "PASS")
-		{
-			std::cout << "{"<< vec[0] << "}\n";
-			Pass::executePass(vec);
-		}
-		else if (cmd == "Nick")
-			Nick::executeNick(vec);
-		else if (cmd == "User")
-			User::executeUser(vec);
-		// for(size_t i = 0; i < vec.size(); i++)
-		// 	std::cout << vec[i] << "***";
-		// std::cout << std::endl;
+			executePass(vec);
+		if (cmd == "NICK")
+			executeNick(vec);
+		if (cmd == "USER")
+			executeUser(vec);
 		if (tmp.empty())
 		{
 			vec.erase(vec.begin(), vec.end());
@@ -133,9 +151,7 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 			flag = true;
 			return ;
 		}
-		std::cout << "|"<< this->password << "|\n";
 		parceCommand();
-		// std::cout << buffer << std::endl;
 		int destFd = pfd.fd;
 		if (destFd != sockfd && destFd != clientFd)
 		{
@@ -146,4 +162,92 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 		}
 	}
 	buffer.clear();
+}
+
+/******************* PASS Command **********************/
+void Client::executePass(std::vector<std::string> &vec)
+{
+	if (this->_registred)
+		std::cout << "PASS :You may not reregister\n";
+	else
+	{
+		if (vec.size() && !vec[0].empty())
+		{
+			this->_pass = true;
+			if (vec[0].compare(this->_password) == 0)
+				this->_authenticated = true;
+			else
+				this->_authenticated = false;
+		}
+		else
+			std::cerr << "PASS :Not enough parameters\n";
+	}
+}
+
+
+/******************* NICK Command **********************/
+bool specialCharacter(std::string &str)
+{
+	std::string sp = "-[]\\'^{}";
+	for (std::string::iterator it = str.begin(); it != str.end(); it++)
+	{
+		if (!std::isalpha(*it) && !std::isdigit(*it) && sp.find(*it) == std::string::npos)
+			return true;
+	}
+	return false;
+}
+
+
+void Client::executeNick(std::vector<std::string> &vec)
+{
+	if (this->_registred)
+		std::cout << "NICK :You may not reregister\n";
+	for (size_t i = 0; i < FtIrc::cObjs.size(); i++)
+	{
+		if (FtIrc::cObjs[i]._nickName == vec[0])
+		{
+			std::cerr << vec[0] << " :Nickname is already in use.\n";
+			return ;
+		}
+	}
+	if (this->_pass)
+	{
+		if (vec.size() && !vec[0].empty())
+		{
+			if (specialCharacter(vec[0]) == 0)
+			{
+				this->_nick = true;
+				this->_nickName = vec[0];
+				std::cout << "your nickname is: " << this->_nickName << "\n";
+			}
+			else
+				std::cerr << "NICK :invalid nickname is given\n";
+		}
+		else
+			std::cerr << "NICK :No nickname given\n";
+	}
+}
+
+/******************* NICK Command **********************/
+void Client::executeUser(std::vector<std::string> &vec)
+{
+	if (this->_registred)
+		std::cout << "USER :You may not reregister\n";
+	if (this->_pass && this->_nick)
+	{
+		if (vec.size() >= 4)
+		{
+			this->_userName = vec[0];
+			this->_realName = vec[3];
+			this->_user = true;
+			this->_registred = true;
+			std::cout << "the user " << this->_userName << " was successfully regestred ";
+			if (this->_authenticated)
+				std::cout << "and authenticated!\n";
+			else
+				std::cout << "but not authenticated!\n";
+		}
+		else
+			std::cerr << "USER :Not enough parameters\n";
+	}
 }

@@ -23,8 +23,8 @@ class FtIrc
 		std::string port;
 		std::string password;
 		std::vector <pollfd > pfds;
-		std::vector <Client > cObjs;
 	public:
+		static std::vector <Client> cObjs;
 		FtIrc();
 		FtIrc(std::string port, std::string password);
 		FtIrc(const FtIrc& obj);
