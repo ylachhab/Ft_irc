@@ -1,21 +1,21 @@
-#include "FtIrc.hpp"
+#include "Server.hpp"
 
-FtIrc::FtIrc()
+Server::Server()
 {
 }
 
-FtIrc::FtIrc(const FtIrc& obj)
+Server::Server(const Server& obj)
 {
 	*this = obj;
 }
 
-FtIrc& FtIrc::operator=(const FtIrc& obj)
+Server& Server::operator=(const Server& obj)
 {
 	(void)obj;
 	return *this;
 }
 
-FtIrc::~FtIrc()
+Server::~Server()
 {
 }
 
@@ -30,7 +30,7 @@ int isNumber(std::string str)
 	return (0);
 }
 
-int FtIrc::get_socket() {
+int Server::get_socket() {
 	int socfd;
 	int yes = 1;
 	int rv;
@@ -70,7 +70,7 @@ int FtIrc::get_socket() {
 	return socfd;
 }
 
-void FtIrc::addToPfds(int newfd){
+void Server::addToPfds(int newfd){
 	struct pollfd tmp;
 	tmp.fd = newfd;
 	tmp.events = POLLIN;
@@ -83,11 +83,11 @@ void *getAddr(struct sockaddr *sa) {
 	return &((struct sockaddr_in6 *) sa)->sin6_addr;
 }
 
-void FtIrc::deletePfds(int i){
+void Server::deletePfds(int i){
 	pfds.erase(pfds.begin() +i);
 }
 
-FtIrc::FtIrc(std::string port, std::string password) {
+Server::Server(std::string port, std::string password) {
 	if (isNumber(port) || port.empty())
 	{
 		std::cout << "Error in port" << std::endl;
@@ -95,7 +95,6 @@ FtIrc::FtIrc(std::string port, std::string password) {
 	}
 	this->port = port;
 	this->password = password;
-	
 	int sockfd = get_socket();
 	if (sockfd == -1)
 	{
@@ -131,6 +130,9 @@ FtIrc::FtIrc(std::string port, std::string password) {
 					else {
 						Client cObj;
 						addToPfds(newFd);
+						cObj.setPassw(password);
+						cObj.setPort(port);
+						cObj.setFd(newFd);
 						cObjs.push_back(cObj);
 						std::cout << "pollserver: new connection from " << inet_ntop(cAddr.ss_family, 
 							getAddr((struct sockaddr*)&cAddr), remoteIP, INET6_ADDRSTRLEN)

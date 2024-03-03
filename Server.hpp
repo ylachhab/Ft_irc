@@ -1,5 +1,5 @@
-#ifndef FTIRC
-#define FTIRC	
+#ifndef SERVER
+#define SERVER	
 
 #include <iostream>
 #include <stdio.h>
@@ -16,20 +16,24 @@
 #include <vector>
 #include <algorithm>
 #include "Client.hpp"
+#include "Channel.hpp"
 
-class FtIrc
+class Client;
+class Channel;
+class Server
 {
 	private:
 		std::string port;
 		std::string password;
 		std::vector <pollfd > pfds;
-		std::vector <Client > cObjs;
 	public:
-		FtIrc();
-		FtIrc(std::string port, std::string password);
-		FtIrc(const FtIrc& obj);
-		FtIrc& operator=(const FtIrc& obj);
-		~FtIrc();
+		static std::vector <Client > cObjs;
+		static std::vector <Channel > _channels;
+		Server();
+		Server(std::string port, std::string password);
+		Server(const Server& obj);
+		Server& operator=(const Server& obj);
+		~Server();
 		int get_socket();
 		void addToPfds(int newfd);
 		void deletePfds(int i);

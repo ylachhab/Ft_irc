@@ -11,13 +11,115 @@ Client::Client(const Client& obj)
 
 Client& Client::operator=(const Client& obj)
 {
-	(void)obj;
+	if (this != &obj)
+	{
+		this->passW = obj.passW;
+		this->port = obj.port;
+		this->_nickName = obj._nickName;
+		this->_userName = obj._userName;
+		this->_hostName = obj._hostName;
+		this->_authenticated = obj._authenticated;
+		this->_registed = obj._registed;
+	}
 	return *this;
 }
 
 Client::~Client()
 {
 }
+
+//--------------Setter-----------------
+
+void Client::setPort(std::string &port)
+{
+	this->port = port;
+}
+
+void Client::setPassw(std::string &passW)
+{
+	this->passW = passW;
+}
+
+void Client::setFd(int&  fd)
+{
+	this->_fd = fd;
+}
+
+// void Client::setNickName(std::string nickName) {
+// 	this->_nickName = nickName;
+// }
+
+// void Client::setUserName(std::string userName) {
+// 	this->_userName = userName;
+// }
+
+// void Client::setAuthenticated(bool authenticated) {
+// 	this->_authenticated = authenticated;
+// }
+
+// void Client::setRegisted(bool registed) {
+// 	this->_registed = registed;
+// }
+
+// //--------------getter-----------------
+
+std::string Client::getNickName() const {
+	return _nickName;
+}
+
+std::string Client::getUserName() const{
+	return _userName;
+}
+
+bool Client::getAuthenticated()const{
+	return _authenticated;
+}
+
+bool Client::getRegisted() const{
+	return _registed;
+}
+
+//-----------------Command-----------------
+
+
+void Client::Kick() {
+	if (vec.size() > 2)
+	{
+		std::string str = vec[0];
+		if (str[0] == '#' && str.length() > 2)
+			vec[0].substr(1);
+		else {
+			std::cout << vec[0] << " :No such channel" << std::endl;
+		}
+		for (size_t i = 0; i < Server::_channels.size(); i++)
+		{
+			if (Server::_channels[i].getChannelName() == vec[0])
+			{
+				if (Server::_channels[i].getOperator() == this->_fd)
+				{
+					if (Server::_channels[i].isAMember(vec[1]))
+						Server::_channels[i].eraseMember(vec[1]);
+					else {
+						///
+					}
+				}
+				else {
+					std::cout << _fd << " :You're not channel operator" << std::endl;
+					return ;
+				}
+				
+			}
+		}
+	}
+	else {
+		std::cout << "Kick :Not enough parameters" << std::endl;
+		return ;
+	}
+}
+
+
+
+//------------------------------------------
 
 void Client::parceCommand() {
 	size_t found = 0;
@@ -61,14 +163,14 @@ void Client::parceCommand() {
 		if (index != std::string::npos)
 		{
 			if (str[index] == ':')
-				PassC.push_back(str.substr(index + 1));
+				vec.push_back(str.substr(index + 1));
 			else
 			{
 				str = str.substr(index);
 				char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
 				while(split_str != NULL)
 				{
-					PassC.push_back(split_str);
+					vec.push_back(split_str);
 					split_str = std::strtok(NULL, " \t");
 				}	
 			}
@@ -80,12 +182,20 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-		// if (cmd == "PASS")
-		for(size_t i = 0; i < PassC.size(); i++)
-			std::cout << PassC[i] << "***";
-		std::cout << std::endl;
+		if (cmd == "KICK")
+			Kick();
+		// else if (cmd == "INVITE")
+		// 	Invite::invite(vec);
+		// else if (cmd == "TOPIC")
+		// 	Topic::topic(vec);
+		// else if (cmd == "MODE")
+		// 	Mode::mode(vec);
 		if (tmp.empty())
+		{
+			vec.erase(vec.begin(), vec.end());
 			break ;
+		}
+		vec.erase(vec.begin(), vec.end());
 	}
 }
 
