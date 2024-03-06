@@ -1,5 +1,5 @@
 #include "Client.hpp"
-#include "FtIrc.hpp"
+#include "Server.hpp"
 
 Client::Client()
 {
@@ -29,7 +29,7 @@ Client& Client::operator=(const Client& obj)
 		// this->_hostName = obj._hostName;
 		this->_nickName = obj._nickName;
 		this->_password = obj._password;
-		this->_port = obj._port;
+		this->port = obj.port;
 		this->_pass = obj._pass;
 		this->_user = obj._user;
 		this->_nick = obj._nick;
@@ -47,9 +47,19 @@ const std::string& Client::getPassword() const
 	return this->_password;
 }
 
+const std::string& Client::getUserName() const
+{
+	return this->_userName;
+}
+
 void Client::setPassword(const std::string& pass)
 {
 	this->_password = pass;
+}
+
+void Client::setFd(int fd)
+{
+	this->_fd = fd;
 }
 
 /**********Parce & execute Command**********/
@@ -120,6 +130,14 @@ void Client::parceCommand() {
 			executeNick(vec);
 		if (cmd == "USER")
 			executeUser(vec);
+		// if (cmd == "KICK")
+			// Kick();
+		// else if (cmd == "INVITE")
+		// 	Invite::invite(vec);
+		// else if (cmd == "TOPIC")
+		// 	Topic::topic(vec);
+		// else if (cmd == "MODE")
+		// 	Mode::mode(vec);
 		if (tmp.empty())
 		{
 			vec.erase(vec.begin(), vec.end());
@@ -152,6 +170,7 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 			return ;
 		}
 		parceCommand();
+		// std::cout << buffer << std::endl;
 		int destFd = pfd.fd;
 		if (destFd != sockfd && destFd != clientFd)
 		{
@@ -202,9 +221,9 @@ void Client::executeNick(std::vector<std::string> &vec)
 {
 	if (this->_registred)
 		std::cout << "NICK :You may not reregister\n";
-	for (size_t i = 0; i < FtIrc::cObjs.size(); i++)
+	for (size_t i = 0; i < Server::cObjs.size(); i++)
 	{
-		if (FtIrc::cObjs[i]._nickName == vec[0])
+		if (Server::cObjs[i]._nickName == vec[0])
 		{
 			std::cerr << vec[0] << " :Nickname is already in use.\n";
 			return ;
@@ -228,7 +247,7 @@ void Client::executeNick(std::vector<std::string> &vec)
 	}
 }
 
-/******************* NICK Command **********************/
+/******************* USER Command **********************/
 void Client::executeUser(std::vector<std::string> &vec)
 {
 	if (this->_registred)

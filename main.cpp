@@ -1,4 +1,4 @@
-#include "FtIrc.hpp"
+#include "Server.hpp"
 
 int main(int ac, char **av) {
 	if (ac != 3)
@@ -8,5 +8,5 @@ int main(int ac, char **av) {
 	}
 	std::string port = av[1];
 	std::string password = av[2];
-	FtIrc obj(port, password);
+	Server obj(port, password);
 }
