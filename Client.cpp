@@ -79,46 +79,6 @@ bool Client::getRegisted() const{
 	return _registed;
 }
 
-//-----------------Command-----------------
-
-
-void Client::Kick() {
-	if (vec.size() > 2)
-	{
-		std::string str = vec[0];
-		if (str[0] == '#' && str.length() > 2)
-			vec[0].substr(1);
-		else {
-			std::cout << vec[0] << " :No such channel" << std::endl;
-		}
-		for (size_t i = 0; i < Server::_channels.size(); i++)
-		{
-			if (Server::_channels[i].getChannelName() == vec[0])
-			{
-				if (Server::_channels[i].getOperator() == this->_fd)
-				{
-					if (Server::_channels[i].isAMember(vec[1]))
-						Server::_channels[i].eraseMember(vec[1]);
-					else {
-						///
-					}
-				}
-				else {
-					std::cout << _fd << " :You're not channel operator" << std::endl;
-					return ;
-				}
-				
-			}
-		}
-	}
-	else {
-		std::cout << "Kick :Not enough parameters" << std::endl;
-		return ;
-	}
-}
-
-
-
 //------------------------------------------
 
 void Client::parceCommand() {
@@ -182,16 +142,23 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-		if (cmd == "KICK")
-			Kick();
-		// else if (cmd == "INVITE")
-		// 	Invite::invite(vec);
+		std::cout << "-----------" << std::endl; 
+		// if (cmd == "KICK" || cmd == "kick")
+		// 	Kick();
+		// else if (cmd == "INVITE" || cmd == "invite")
+		// 	Invite();
 		// else if (cmd == "TOPIC")
 		// 	Topic::topic(vec);
 		// else if (cmd == "MODE")
 		// 	Mode::mode(vec);
+		for (size_t i = 0; i < vec.size(); i++)
+		{
+			std::cout << vec[i] << " ";
+		}
+		std::cout << std::endl;
 		if (tmp.empty())
 		{
+			// std::cout << "--------++++++------" << std::endl; 
 			vec.erase(vec.begin(), vec.end());
 			break ;
 		}
@@ -200,6 +167,7 @@ void Client::parceCommand() {
 }
 
 void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
+	error = false;
 	char buf[512];
 	std::memset(&buf, 0, sizeof buf);
 	int nbyte = recv(pfd.fd, buf, sizeof buf, 0);
@@ -221,8 +189,8 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 			flag = true;
 			return ;
 		}
-		parceCommand();
 		// std::cout << buffer << std::endl;
+		parceCommand();
 		int destFd = pfd.fd;
 		if (destFd != sockfd && destFd != clientFd)
 		{

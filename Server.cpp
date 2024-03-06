@@ -1,5 +1,8 @@
 #include "Server.hpp"
 
+std::vector <Client > Server::cObjs;
+std::vector <Channel > Server::_channels;
+
 Server::Server()
 {
 }
@@ -156,5 +159,3 @@ Server::Server(std::string port, std::string password) {
 		}
 	}
 }
-
-// PASS 123 hg jh\r\nNICK n1\r\n

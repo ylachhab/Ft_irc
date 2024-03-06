@@ -57,9 +57,9 @@ class Client
 
 		//----------------Command---------------
 		void Kick();
+		void Invite();
 };
 
-// void Invite();
 // void Topic();
 // void Mode();
 
