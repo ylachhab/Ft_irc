@@ -11,7 +11,8 @@ def connect_to_server(host, port):
         print(f"Connected to {host} on port {port}")
         
         # Send data to the server
-        message = "    hello    world\r\n hello  kdgj  \r\nglkj : kgf fgkbj gfklb\n"
+        # message = "    hello    world\r\n hello  kdgj  \r\nglkj : kgf fgkbj gfklb\n"
+        message = "PASS oooo\r\n"
         client_socket.sendall(message.encode())
         print("Message sent to server:", message)
         

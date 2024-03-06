@@ -59,6 +59,7 @@ class Client
 		void executePass(std::vector<std::string> &vec);
 		void executeNick(std::vector<std::string> &vec);
 		void executeUser(std::vector<std::string> &vec);
+		// void executeJoin(std::vector<std::string> &vec);
 		// void Kick();
 		// void Invite();
 		// void Topic();
