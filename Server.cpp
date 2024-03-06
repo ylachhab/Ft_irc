@@ -1,5 +1,8 @@
 #include "Server.hpp"
 
+std::vector <Client> Server::cObjs;
+std::vector <Channel > Server::_channels;
+
 Server::Server()
 {
 }
@@ -134,7 +137,6 @@ Server::Server(std::string port, std::string password) {
 					else {
 						Client cObj;
 						cObj.setPassword(this->password);
-						addToPfds(newFd);
 						addToPfds(newFd);
 						cObj.setFd(newFd);
 						cObjs.push_back(cObj);

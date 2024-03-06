@@ -16,8 +16,6 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
-#include "Server.hpp"
-#include "Channel.hpp"
 
 
 class Client
@@ -30,13 +28,13 @@ class Client
 		// std::string	_hostName;
 		std::string	_nickName;
 		std::string	_password;
-		std::string port;
+		std::string _port;
 		bool		_authenticated;
 		bool		_registred;
 		bool		_pass;
 		bool		_nick;
 		bool		_user;
-		int			_fd;
+		bool		_fd;
 	public:
 		bool error;
 		//Orthodox canonical class form
@@ -50,7 +48,6 @@ class Client
 		const std::string& getUserName() const;
 		void setPassword(const std::string& pass);
 		void setFd(int fd);
-
 		//Parce and execute Command
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
@@ -59,12 +56,6 @@ class Client
 		void executePass(std::vector<std::string> &vec);
 		void executeNick(std::vector<std::string> &vec);
 		void executeUser(std::vector<std::string> &vec);
-		// void executeJoin(std::vector<std::string> &vec);
-		// void Kick();
-		// void Invite();
-		// void Topic();
-		// void Mode();
 };
-
 
 #endif

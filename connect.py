@@ -11,8 +11,7 @@ def connect_to_server(host, port):
         print(f"Connected to {host} on port {port}")
         
         # Send data to the server
-        # message = "    hello    world\r\n hello  kdgj  \r\nglkj : kgf fgkbj gfklb\n"
-        message = "PASS oooo\r\n"
+        message = "    hello    world\r\n hello  kdgj  \r\nglkj : kgf fgkbj gfklb\n"
         client_socket.sendall(message.encode())
         print("Message sent to server:", message)
         
@@ -27,6 +26,7 @@ def connect_to_server(host, port):
         print("Connection refused. Make sure the server is running and the port is correct.")
     except Exception as e:
         print("An error occurred:", e)
+
 if __name__ == "__main__":
     host = 'localhost'  # Change this to your server's IP address
     port = 8080  # Change this to the port your server is listening on
