@@ -18,7 +18,9 @@ class Channel {
 		Channel& operator=(const Channel& obj);
 		~Channel();
 		void setChannelName(std::string name);
-		// void setChannel(Client cl);
+		std::string getChannelName();
+		// void setChannel(Client &cl);
+		std::vector<Client> &getChannel();
 		void setOperator(int oper);
 		std::string getChannelName() const;
 		int getOperator() const;

@@ -34,7 +34,7 @@ class Client
 		bool		_pass;
 		bool		_nick;
 		bool		_user;
-		bool		_fd;
+		int			_fd;
 	public:
 		bool error;
 		//Orthodox canonical class form
@@ -46,16 +46,19 @@ class Client
 		//Getters and setters
 		const std::string& getPassword() const;
 		const std::string& getUserName() const;
+		const std::string& getNickName() const;
 		void setPassword(const std::string& pass);
 		void setFd(int fd);
+		int	 getFd() const;
 		//Parce and execute Command
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
-
+		void sendRepance(const std::string& str);
 		//Commands
 		void executePass(std::vector<std::string> &vec);
 		void executeNick(std::vector<std::string> &vec);
 		void executeUser(std::vector<std::string> &vec);
+		void executeJoin(std::vector<std::string> &vec);
 };
 
 #endif

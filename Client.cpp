@@ -8,6 +8,7 @@ Client::Client()
 	this->_pass = false;
 	this->_nick = false;
 	this->_user = false;
+	this->_nickName = "*";
 }
 
 Client::Client(const Client& obj)
@@ -26,6 +27,7 @@ Client& Client::operator=(const Client& obj)
 		this->_registred = obj._registred;
 		this->_userName = obj._userName;
 		this->_realName = obj._realName;
+		this->_fd = obj._fd;
 		// this->_hostName = obj._hostName;
 		this->_nickName = obj._nickName;
 		this->_password = obj._password;
@@ -49,7 +51,12 @@ const std::string& Client::getPassword() const
 
 const std::string& Client::getUserName() const
 {
-	return this->_password;
+	return this->_userName;
+}
+
+const std::string& Client::getNickName() const
+{
+	return this->_nickName;
 }
 
 void Client::setPassword(const std::string& pass)
@@ -60,6 +67,10 @@ void Client::setPassword(const std::string& pass)
 void Client::setFd(int fd)
 {
 	this->_fd = fd;
+}
+int Client::getFd() const
+{
+	return this->_fd;
 }
 
 /**********Parce & execute Command**********/
@@ -124,13 +135,14 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-		std::cout << cmd << " " << vec[0] << "\n";
 		if (cmd == "PASS")
 			executePass(vec);
 		if (cmd == "NICK")
 			executeNick(vec);
 		if (cmd == "USER")
 			executeUser(vec);
+		if (cmd == "JOIN")
+			executeJoin(vec);
 		if (tmp.empty())
 		{
 			vec.erase(vec.begin(), vec.end());
@@ -174,104 +186,4 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 		}
 	}
 	buffer.clear();
-}
-
-/******************* PASS Command **********************/
-void Client::executePass(std::vector<std::string> &vec)
-{
-	if (this->_registred)
-		std::cout << "462 "<<  this->_nickName << " :You may not reregister\n";
-	else if (!this->_nick)
-	{
-		if (vec.size() && !vec[0].empty())
-		{
-			this->_pass = true;
-			if (vec[0].compare(this->_password) == 0)
-			{
-				this->_authenticated = true;
-				std::cout << "authenticated!\n";
-			}
-			else
-			{
-				this->_authenticated = false;
-				std::cout << "not authenticated!\n";
-			}
-		}
-		else
-			std::cerr << "PASS :Not enough parameters\n";
-	}
-	else
-		std::cout << "PASS :you already authenticated!\n";
-}
-
-
-/******************* NICK Command **********************/
-bool specialCharacter(std::string &str)
-{
-	std::string sp = "-[]\\'^{}";
-	for (std::string::iterator it = str.begin(); it != str.end(); it++)
-	{
-		if (!std::isalpha(*it) && !std::isdigit(*it) && sp.find(*it) == std::string::npos)
-			return true;
-	}
-	return false;
-}
-
-
-void Client::executeNick(std::vector<std::string> &vec)
-{
-	if (this->_registred)
-		std::cout << "NICK :You may not reregister\n";
-	for (size_t i = 0; i < Server::cObjs.size(); i++)
-	{
-		if (Server::cObjs[i]._nickName == vec[0])
-		{
-			std::cerr << vec[0] << " :Nickname is already in use.\n";
-			return ;
-		}
-	}
-	if (this->_pass && this->_authenticated)
-	{
-		if (vec.size() && !vec[0].empty())
-		{
-			if (specialCharacter(vec[0]) == 0)
-			{
-				this->_nick = true;
-				this->_nickName = vec[0];
-				std::cout << "your nickname is: " << this->_nickName << "\n";
-			}
-			else
-				std::cerr << "NICK :invalid nickname is given\n";
-		}
-		else
-			std::cerr << "NICK :No nickname given\n";
-	}
-	else
-		std::cout << "NICK :you have to authenticat first!\n";
-}
-
-/******************* NICK Command **********************/
-void Client::executeUser(std::vector<std::string> &vec)
-{
-	if (this->_registred)
-		std::cout << "USER :You may not reregister\n";
-	if (this->_pass && this->_nick && this->_authenticated)
-	{
-		if (vec.size() >= 4)
-		{
-			this->_userName = vec[0];
-			this->_realName = vec[3];
-			this->_user = true;
-			this->_registred = true;
-			std::cout << "the user " << this->_userName << " was successfully regestred ";
-			if (this->_authenticated)
-				std::cout << "and authenticated!\n";
-			else
-				std::cout << "but not authenticated!\n";
-		}
-		else
-			std::cerr << "USER :Not enough parameters\n";
-	}
-	else
-		std::cout << "USER :you have to authenticat and set a nickname first!\n";
 }
