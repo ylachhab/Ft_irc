@@ -22,8 +22,9 @@ class Channel {
 		void setOperator(int oper);
 		std::string getChannelName() const;
 		int getOperator() const;
-		bool isAMember(std::string user) const;
-		void eraseMember(std::string user);
+		bool isAMember(std::string nick);
+		void eraseMember(std::string nick);
+		// Client ret(int)
 };
 
 #endif

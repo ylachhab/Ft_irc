@@ -14,7 +14,12 @@ Server::Server(const Server& obj)
 
 Server& Server::operator=(const Server& obj)
 {
-	(void)obj;
+	if (this != &obj)
+	{
+		this->port = obj.port;
+		this->password = obj.password;
+		this->pfds = obj.pfds;
+	}
 	return *this;
 }
 
@@ -22,6 +27,54 @@ Server::~Server()
 {
 }
 
+bool Server::existeNick( std::string nickName) {
+	for (size_t i = 0; i < cObjs.size(); i++)
+	{
+		if (cObjs[i].getNickName() == nickName)
+				return true;
+	}
+	return false;
+}
+
+int Server::retFd( std::string nickName) {
+	for (size_t i = 0; i < cObjs.size(); i++)
+	{
+		if (cObjs[i].getNickName() == nickName)
+				return cObjs[i].getFd();
+	}
+	return -1;
+}
+
+bool Server::isMember(std::string channel, std::string nickName) {
+	for (size_t i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].getChannelName() == channel)
+		{
+			if (_channels[i].isAMember(nickName))
+				return true;
+			else
+				return false;
+		}
+	}
+	return false;
+}
+
+int Server::findChannel(std::string channel) {
+	for (size_t i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].getChannelName() == channel)
+			return _channels[i].getOperator();
+	}
+	return -1;
+}
+
+void Server::eraseMember(std::string channel, std::string nick) {
+	for (size_t i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].getChannelName() == channel)
+			_channels[i].eraseMember(nick);
+	}
+}
 
 int isNumber(std::string str)
 {
@@ -76,7 +129,7 @@ int Server::get_socket() {
 void Server::addToPfds(int newfd){
 	struct pollfd tmp;
 	tmp.fd = newfd;
-	tmp.events = POLLIN;
+	tmp.events = POLLIN | POLLOUT;
 	pfds.push_back(tmp);
 }
 

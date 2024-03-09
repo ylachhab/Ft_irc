@@ -20,6 +20,7 @@ Client& Client::operator=(const Client& obj)
 		this->_hostName = obj._hostName;
 		this->_authenticated = obj._authenticated;
 		this->_registed = obj._registed;
+		this->_fd = obj._fd;
 	}
 	return *this;
 }
@@ -77,6 +78,10 @@ bool Client::getAuthenticated()const{
 
 bool Client::getRegisted() const{
 	return _registed;
+}
+
+int Client::getFd() const{
+	return _fd;
 }
 
 //------------------------------------------
@@ -142,23 +147,21 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-		std::cout << "-----------" << std::endl; 
-		// if (cmd == "KICK" || cmd == "kick")
-		// 	Kick();
-		// else if (cmd == "INVITE" || cmd == "invite")
-		// 	Invite();
+		if (cmd == "KICK" || cmd == "kick")
+			Kick();
+		else if (cmd == "INVITE" || cmd == "invite")
+			Invite();
 		// else if (cmd == "TOPIC")
 		// 	Topic::topic(vec);
-		// else if (cmd == "MODE")
-		// 	Mode::mode(vec);
-		for (size_t i = 0; i < vec.size(); i++)
-		{
-			std::cout << vec[i] << " ";
-		}
-		std::cout << std::endl;
+		else if (cmd == "MODE" || cmd == "mode")
+			Mode();
+		// for (size_t i = 0; i < vec.size(); i++)
+		// {
+		// 	std::cout << vec[i] << " ";
+		// }
+		// std::cout << std::endl;
 		if (tmp.empty())
-		{
-			// std::cout << "--------++++++------" << std::endl; 
+		{ 
 			vec.erase(vec.begin(), vec.end());
 			break ;
 		}

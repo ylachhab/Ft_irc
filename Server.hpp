@@ -37,6 +37,11 @@ class Server
 		int get_socket();
 		void addToPfds(int newfd);
 		void deletePfds(int i);
+		static int findChannel(std::string channel);
+		static bool isMember(std::string channel, std::string nickName);
+		static bool existeNick( std::string nickName);
+		static int retFd( std::string nickName);
+		static void eraseMember(std::string channel, std::string nick);
 };
 
 #endif

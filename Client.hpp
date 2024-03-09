@@ -25,6 +25,7 @@ class Client
 	private:
 		std::string	buffer;
 		std::vector <std::string > vec;
+		std::vector <std::string > channelInvite;
 		std::string	_nickName;
 		std::string	_userName;
 		std::string	_hostName;
@@ -41,6 +42,7 @@ class Client
 		~Client();
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
+
 		//----------Setter---------
 		void setPort(std::string& port);
 		void setPassw(std::string& passW);
@@ -49,18 +51,27 @@ class Client
 		// void setUserName(std::string userName);
 		// void setAuthenticated(bool authenticated);
 		// void setRegisted(bool registed);
+
 		// //-------------Getter--------------
 		std::string getNickName() const;
 		std::string getUserName() const;
 		bool getAuthenticated() const;
 		bool getRegisted() const;
+		int getFd() const;
 
 		//----------------Command---------------
 		void Kick();
+
+		//---------------
+		void sendTo(std::string msg);
+		bool isInvited(std::string channel);
 		void Invite();
+
+		//---------------
+		void Mode();
+
 };
 
 // void Topic();
-// void Mode();
 
 #endif

@@ -42,22 +42,27 @@ int Channel::getOperator() const {
 	return _operator;
 }
 
-bool Channel::isAMember(std::string user) const
+
+bool Channel::isAMember(std::string nick)
 {
 	for (size_t i = 0; i < _channel.size(); i++)
 	{
-		if (_channel[i].getUserName() == user)
+		if (_channel[i].getNickName() == nick)
 			return true;
 	}
 	return false;
 }
 
-void Channel::eraseMember(std::string user) {
+void Channel::eraseMember(std::string nick) {
 	// if (std::find(_channel.begin(), _channel.end(), obj) != _channel.end())
 	// 	_channel.erase(std::find(_channel.begin(), _channel.end(), obj));
 	for (size_t i = 0; i < _channel.size(); i++)
 	{
-		if (_channel[i].getUserName() == user)
+		if (_channel[i].getNickName() == nick)
 			_channel.erase(_channel.begin() + i);
 	}
 }
+
+// Client Channel::ret(int i) {
+// 	return (_channel[i]);
+// }
