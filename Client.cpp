@@ -9,6 +9,7 @@ Client::Client()
 	this->_nick = false;
 	this->_user = false;
 	this->_nickName = "*";
+	this->_maxChannel = 0;
 }
 
 Client::Client(const Client& obj)
@@ -71,6 +72,15 @@ void Client::setFd(int fd)
 int Client::getFd() const
 {
 	return this->_fd;
+}
+
+void Client::setFd(int max_channels)
+{
+	this->_maxChannel = max_channels;
+}
+int Client::getFd() const
+{
+	return this->_maxChannel;
 }
 
 /**********Parce & execute Command**********/
@@ -145,10 +155,10 @@ void Client::parceCommand() {
 			executeJoin(vec);
 		if (tmp.empty())
 		{
-			vec.erase(vec.begin(), vec.end());
+			vec.clear();
 			break ;
 		}
-		vec.erase(vec.begin(), vec.end());
+		vec.clear();
 	}
 }
 

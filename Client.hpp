@@ -35,6 +35,7 @@ class Client
 		bool		_nick;
 		bool		_user;
 		int			_fd;
+		int			_maxChannel;
 	public:
 		bool error;
 		//Orthodox canonical class form
@@ -50,10 +51,13 @@ class Client
 		void setPassword(const std::string& pass);
 		void setFd(int fd);
 		int	 getFd() const;
+		void setMaxChannel(int max_channels);
+		int	 getMaxChannel() const;
 		//Parce and execute Command
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
 		void sendRepance(const std::string& str);
+		void addNewChannel(std::string channelName);
 		//Commands
 		void executePass(std::vector<std::string> &vec);
 		void executeNick(std::vector<std::string> &vec);

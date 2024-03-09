@@ -1,6 +1,8 @@
 import socket
 
-def connect_to_server(host, port):
+clients = []
+
+def connect_to_server(host, port, i):
     try:
         # Create a socket object
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -11,7 +13,7 @@ def connect_to_server(host, port):
         print(f"Connected to {host} on port {port}")
         
         # Send data to the server
-        message = "    hello    world\r\n hello  kdgj  \r\nglkj : kgf fgkbj gfklb\n"
+        message = f"PASS 123\r\nNICK client{i}\r\nUSER u{i} 0 * :U{i}\r\n"
         client_socket.sendall(message.encode())
         print("Message sent to server:", message)
         
@@ -20,7 +22,8 @@ def connect_to_server(host, port):
         # print("Received:", response.decode())
         
         # Close the connection
-        client_socket.close()
+        clients.append(client_socket)
+        # client_socket.close()
         
     except ConnectionRefusedError:
         print("Connection refused. Make sure the server is running and the port is correct.")
@@ -29,5 +32,10 @@ def connect_to_server(host, port):
 
 if __name__ == "__main__":
     host = 'localhost'  # Change this to your server's IP address
-    port = 8080  # Change this to the port your server is listening on
-    connect_to_server(host, port)
+    port = 6667  # Change this to the port your server is listening on
+    for i in range(100000):
+        connect_to_server(host, port, i)
+    while True:
+        continue
+    # for i in range(100):
+    #     clients[i].close()

@@ -29,6 +29,10 @@ std::string Channel::getChannelName() {
 	return (this->_channelName);
 }
 
+std::string Channel::getChannelPassword() const{
+	return this->Channel_password;
+}
+
 // void Channel::setChannel(Client &cl) {
 // 	this->_channel.push_back(cl);
 // }
@@ -38,15 +42,15 @@ std::vector<Client> &Channel::getChannel()
 	return this->_channel;
 }
 
-void Channel::setOperator(int oper) {
-	this->_operator = oper;
+void Channel::setOperator(int oper, std::string nickname) {
+	this->_operator[oper] = nickname;
 }
 
 std::string Channel::getChannelName() const {
 	return _channelName;
 }
 
-int Channel::getOperator() const {
+std::map<int, std::string> Channel::getOperator() const {
 	return _operator;
 }
 
