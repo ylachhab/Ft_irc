@@ -1,7 +1,15 @@
 #include "Client.hpp"
+#include "Server.hpp"
 
 Client::Client()
 {
+	this->_authenticated = false;
+	this->_registred = false;
+	this->_pass = false;
+	this->_nick = false;
+	this->_user = false;
+	this->_nickName = "*";
+	this->_maxChannel = 0;
 }
 
 Client::Client(const Client& obj)
@@ -13,14 +21,21 @@ Client& Client::operator=(const Client& obj)
 {
 	if (this != &obj)
 	{
-		this->passW = obj.passW;
-		this->port = obj.port;
-		this->_nickName = obj._nickName;
-		this->_userName = obj._userName;
-		this->_hostName = obj._hostName;
+		this->buffer = obj.buffer;
+		this->vec = obj.vec;
+
 		this->_authenticated = obj._authenticated;
-		this->_registed = obj._registed;
+		this->_registred = obj._registred;
+		this->_userName = obj._userName;
+		this->_realName = obj._realName;
 		this->_fd = obj._fd;
+		// this->_hostName = obj._hostName;
+		this->_nickName = obj._nickName;
+		this->_password = obj._password;
+		this->_port = obj._port;
+		this->_pass = obj._pass;
+		this->_user = obj._user;
+		this->_nick = obj._nick;
 	}
 	return *this;
 }
@@ -29,59 +44,34 @@ Client::~Client()
 {
 }
 
-//--------------Setter-----------------
-
-void Client::setPort(std::string &port)
+/*************Getters & Setters*****************/
+std::string Client::getPassword() const
 {
-	this->port = port;
+	return this->_password;
 }
 
-void Client::setPassw(std::string &passW)
+std::string Client::getUserName() const
 {
-	this->passW = passW;
+	return this->_userName;
 }
 
-void Client::setFd(int&  fd)
+std::string Client::getNickName() const
+{
+	return this->_nickName;
+}
+
+void Client::setPassword(const std::string& pass)
+{
+	this->_password = pass;
+}
+
+void Client::setFd(int fd)
 {
 	this->_fd = fd;
 }
-
-// void Client::setNickName(std::string nickName) {
-// 	this->_nickName = nickName;
-// }
-
-// void Client::setUserName(std::string userName) {
-// 	this->_userName = userName;
-// }
-
-// void Client::setAuthenticated(bool authenticated) {
-// 	this->_authenticated = authenticated;
-// }
-
-// void Client::setRegisted(bool registed) {
-// 	this->_registed = registed;
-// }
-
-// //--------------getter-----------------
-
-std::string Client::getNickName() const {
-	return _nickName;
-}
-
-std::string Client::getUserName() const{
-	return _userName;
-}
-
-bool Client::getAuthenticated()const{
-	return _authenticated;
-}
-
-bool Client::getRegisted() const{
-	return _registed;
-}
-
-int Client::getFd() const{
-	return _fd;
+int Client::getFd() const
+{
+	return this->_fd;
 }
 
 //------------------------------------------
@@ -147,12 +137,18 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-		if (cmd == "KICK" || cmd == "kick")
+		if (cmd == "PASS")
+			executePass(vec);
+		else if (cmd == "NICK")
+			executeNick(vec);
+		else if (cmd == "USER")
+			executeUser(vec);
+		else if (cmd == "JOIN")
+			executeJoin(vec);
+		else if (cmd == "KICK" || cmd == "kick")
 			Kick();
 		else if (cmd == "INVITE" || cmd == "invite")
 			Invite();
-		// else if (cmd == "TOPIC")
-		// 	Topic::topic(vec);
 		else if (cmd == "MODE" || cmd == "mode")
 			Mode();
 		// for (size_t i = 0; i < vec.size(); i++)
@@ -161,12 +157,12 @@ void Client::parceCommand() {
 		// }
 		// std::cout << std::endl;
 		if (tmp.empty())
-		{ 
-			vec.erase(vec.begin(), vec.end());
+		{
+			vec.clear();
 			break ;
 		}
-		vec.erase(vec.begin(), vec.end());
-	}
+		vec.clear();
+}
 }
 
 void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {

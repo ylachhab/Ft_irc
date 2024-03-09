@@ -9,7 +9,7 @@ void sendClient(std::string msg, int fd) {
 }
 
 void Client::Kick() {
-	if (!this->_authenticated || !this->_registed) {
+	if (!this->_authenticated || !this->_registred) {
 		sendTo(" :Register first.\r\n");
 		// std::cout << " :Register first." << std::endl;
 		return ;
@@ -72,7 +72,7 @@ bool Client::isInvited(std::string channel) {
 }
 
 void Client::Invite() {
-	if (!this->_authenticated || !this->_registed)
+	if (!this->_authenticated || !this->_registred)
 	{
 		sendTo(" :Register first.\r\n");
 		// std::cout << " :Register first." << std::endl;
@@ -120,7 +120,7 @@ void Client::Invite() {
 
 
 void Client::Mode() {
-	if (!this->_authenticated || !this->_registed)
+	if (!this->_authenticated || !this->_registred)
 	{
 		sendTo(" :Register first.\r\n");
 		std::cout << " :Register first." << std::endl;

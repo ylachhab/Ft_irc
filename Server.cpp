@@ -185,9 +185,8 @@ Server::Server(std::string port, std::string password) {
 					}
 					else {
 						Client cObj;
+						cObj.setPassword(this->password);
 						addToPfds(newFd);
-						cObj.setPassw(password);
-						cObj.setPort(port);
 						cObj.setFd(newFd);
 						cObjs.push_back(cObj);
 						std::cout << "pollserver: new connection from " << inet_ntop(cAddr.ss_family, 

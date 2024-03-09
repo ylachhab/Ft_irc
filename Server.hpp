@@ -27,7 +27,7 @@ class Server
 		std::string password;
 		std::vector <pollfd > pfds;
 	public:
-		static std::vector <Client > cObjs;
+		static std::vector <Client> cObjs;
 		static std::vector <Channel > _channels;
 		Server();
 		Server(std::string port, std::string password);

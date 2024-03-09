@@ -17,8 +17,6 @@
 #include <algorithm>
 #include <cctype>
 #include "Server.hpp"
-#include "Channel.hpp"
-
 
 class Client
 {
@@ -28,35 +26,45 @@ class Client
 		std::vector <std::string > channelInvite;
 		std::string	_nickName;
 		std::string	_userName;
-		std::string	_hostName;
+		std::string	_realName;
+		// std::string	_hostName;
+		std::string	_password;
+		std::string _port;
 		bool		_authenticated;
-		bool		_registed;
-		std::string port;
-		std::string passW;
+		bool		_registred;
+		bool		_pass;
+		bool		_nick;
+		bool		_user;
 		int			_fd;
+		int			_maxChannel;
 	public:
 		bool error;
+		//Orthodox canonical class form
 		Client();
 		Client(const Client& obj);
 		Client& operator=(const Client& obj);
 		~Client();
+
+		//Parce and execute Command
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
 
 		//----------Setter---------
-		void setPort(std::string& port);
-		void setPassw(std::string& passW);
-		void setFd(int& fd);
+		void setFd(int fd);
+		void setPassword(const std::string& pass);
+		// void setMaxChannel(int max_channels);
 		// void setNickName(std::string nickName);
 		// void setUserName(std::string userName);
 		// void setAuthenticated(bool authenticated);
 		// void setRegisted(bool registed);
 
 		// //-------------Getter--------------
+		std::string getPassword() const;
+		// int	 getMaxChannel() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
-		bool getAuthenticated() const;
-		bool getRegisted() const;
+		// bool getAuthenticated() const;
+		// bool getRegisted() const;
 		int getFd() const;
 
 		//----------------Command---------------
@@ -70,8 +78,15 @@ class Client
 		//---------------
 		void Mode();
 
-};
-
 // void Topic();
+
+		void sendRepance(const std::string& str);
+		void addNewChannel(std::string channelName);
+		//Commands
+		void executePass(std::vector<std::string> &vec);
+		void executeNick(std::vector<std::string> &vec);
+		void executeUser(std::vector<std::string> &vec);
+		void executeJoin(std::vector<std::string> &vec);
+};
 
 #endif
