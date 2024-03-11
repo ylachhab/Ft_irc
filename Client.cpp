@@ -45,17 +45,17 @@ Client::~Client()
 }
 
 /*************Getters & Setters*****************/
-const std::string& Client::getPassword() const
+std::string Client::getPassword() const
 {
 	return this->_password;
 }
 
-const std::string& Client::getUserName() const
+std::string Client::getUserName() const
 {
 	return this->_userName;
 }
 
-const std::string& Client::getNickName() const
+std::string Client::getNickName() const
 {
 	return this->_nickName;
 }
@@ -83,7 +83,6 @@ int Client::getMaxChannel() const
 	return this->_maxChannel;
 }
 
-/**********Parce & execute Command**********/
 void Client::parceCommand() {
 	size_t found = 0;
 	while ((found = buffer.find("\n", found)) != std::string::npos)
@@ -147,19 +146,30 @@ void Client::parceCommand() {
 		}
 		if (cmd == "PASS")
 			executePass(vec);
-		if (cmd == "NICK")
+		else if (cmd == "NICK")
 			executeNick(vec);
-		if (cmd == "USER")
+		else if (cmd == "USER")
 			executeUser(vec);
-		if (cmd == "JOIN")
+		else if (cmd == "JOIN")
 			executeJoin(vec);
+		// else if (cmd == "KICK" || cmd == "kick")
+		// 	Kick();
+		// else if (cmd == "INVITE" || cmd == "invite")
+		// 	Invite();
+		// else if (cmd == "MODE" || cmd == "mode")
+		// 	Mode();
+		// for (size_t i = 0; i < vec.size(); i++)
+		// {
+		// 	std::cout << vec[i] << " ";
+		// }
+		// std::cout << std::endl;
 		if (tmp.empty())
 		{
 			vec.clear();
 			break ;
 		}
 		vec.clear();
-	}
+}
 }
 
 void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {

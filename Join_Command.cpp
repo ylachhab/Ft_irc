@@ -8,18 +8,23 @@ std::vector<std::pair<std::string, std::string> > splitChannels
 {
 	std::vector<std::pair<std::string, std::string> > vec;
 	std::stringstream split_channel;
-	std::stringstream split_keys;
 	std::string channel;
-	std::string key;
 	split_channel << channels_Name;
-	split_keys << keys;
 	if (size < 2)
 	{
+		puts("hi");
+		std::string empty  = "";
 		while (std::getline(split_channel, channel, ','))
-			vec.push_back(std::make_pair(channel, ""));
+			vec.push_back(std::make_pair(channel, empty));
 	}
-	while (std::getline(split_channel, channel, ',') && std::getline(split_keys, key, ','))
-		vec.push_back(std::make_pair(channel, key));
+	else
+	{
+		std::stringstream split_keys;
+		std::string key;
+		split_keys << keys;
+		while (std::getline(split_channel, channel, ',') && std::getline(split_keys, key, ','))
+			vec.push_back(std::make_pair(channel, key));
+	}
 	return vec;
 }
 
@@ -53,8 +58,8 @@ void Client::addNewChannel(std::string channelName)
 	channel.setOperator(this->_fd, this->getNickName());
 	channel.getChannel().push_back(*this);
 	Server::_channels.push_back(channel);
-	int num = this->getMaxChannel();
-	this->setMaxChannel(num++);
+	// int num = this->getMaxChannel();
+	// this->setMaxChannel(num++);
 }
 
 
@@ -76,8 +81,8 @@ void Client::executeJoin(std::vector<std::string> &vec)
 				// std::cout<< " " << ClientExistInChannel(this, index) <<'\n';
 				if(index != -1 && !ClientExistInChannel(this, index) && this->getMaxChannel() < 10)
 				{
-					int num = this->getMaxChannel();
-					this->setMaxChannel(num++);
+					// int num = this->getMaxChannel();
+					// this->setMaxChannel(num++);
 					// if (Server::_channels[index]._passSet &&  Server::_channels[index].getChannelPassword() == it->second)
 					Server::_channels[index].getChannel().push_back(*this);
 					// else if (!Server::_channels[index]._passSet)
@@ -95,14 +100,16 @@ void Client::executeJoin(std::vector<std::string> &vec)
 	}
 	else
 		sendRepance(":FT_IRC.1337.ma 451 " + this->_nickName + " :Register first.\r\n");
+
+	// std::cout << "-> " << Server::_channels.size() << "\n";
 	// for (size_t i = 0; i < Server::_channels.size(); i++)
 	// {
 	// 	std::cout << "=========== channel number " << i  << ":\n" <<  Server::_channels[i].getChannelName() << " =============\n";
-	// 	puts("******************** Channel Members *************************");
-	// 	for (size_t i = 0; i < Server::_channels[i].getChannel().size(); i++)
+	// 		puts("******************** Channel Members *************************");
+	// 	for (size_t j = 0; j < Server::_channels[i].getChannel().size(); j++)
 	// 	{
-	// 		std::cout << "-> " << Server::_channels[i].getChannel()[i].getNickName() << "\n";
+
+	// 		std::cout << "-> " << Server::_channels[i].getChannel()[j].getNickName() << "\n";
 	// 	}
 	// }
-	
 }

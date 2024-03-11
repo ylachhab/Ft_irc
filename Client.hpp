@@ -16,17 +16,18 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
-
+#include "Server.hpp"
 
 class Client
 {
 	private:
 		std::string	buffer;
-		std::vector	<std::string > vec;
+		std::vector <std::string > vec;
+		std::vector <std::string > channelInvite;
+		std::string	_nickName;
 		std::string	_userName;
 		std::string	_realName;
 		// std::string	_hostName;
-		std::string	_nickName;
 		std::string	_password;
 		std::string _port;
 		bool		_authenticated;
@@ -44,18 +45,41 @@ class Client
 		Client& operator=(const Client& obj);
 		~Client();
 
-		//Getters and setters
-		const std::string& getPassword() const;
-		const std::string& getUserName() const;
-		const std::string& getNickName() const;
-		void setPassword(const std::string& pass);
-		void setFd(int fd);
-		int	 getFd() const;
-		void setMaxChannel(int max_channels);
-		int	 getMaxChannel() const;
 		//Parce and execute Command
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
+
+		//----------Setter---------
+		void setFd(int fd);
+		void setPassword(const std::string& pass);
+		void setMaxChannel(int max_channels);
+		// void setNickName(std::string nickName);
+		// void setUserName(std::string userName);
+		// void setAuthenticated(bool authenticated);
+		// void setRegisted(bool registed);
+
+		// //-------------Getter--------------
+		std::string getPassword() const;
+		int	 getMaxChannel() const;
+		std::string getNickName() const;
+		std::string getUserName() const;
+		// bool getAuthenticated() const;
+		// bool getRegisted() const;
+		int getFd() const;
+
+		//----------------Command---------------
+		// void Kick();
+
+		//---------------
+		// void sendTo(std::string msg);
+		// bool isInvited(std::string channel);
+		// void Invite();
+
+		//---------------
+		// void Mode();
+
+// void Topic();
+
 		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);
 		//Commands
