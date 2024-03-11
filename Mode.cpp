@@ -23,7 +23,8 @@ void Client::checkFlag(std::string channel) {
 		std::stringstream ss(Server::_channels[i].getlimitMbr());
 		std::string lim;
 		ss >> lim;
-		sendTo(this->_nickName + " #" + channel + " +" + sub + " " + lim + " " + Server::_channels[i].getChannelPwd() + "\r\n");
+		sendTo(this->_nickName + " #" + channel + " +" + sub + " " + lim + " "
+			+ Server::_channels[i].getChannelPwd() + "\r\n");
 	}
 	else if (Server::_channels[i]._channelMode._limit)
 	{
@@ -45,11 +46,6 @@ void Client::Mode() {
 		std::cout << " :Register first." << std::endl;
 		return ;
 	}
-	// if (vec.size() == 1)
-	// {
-	// 	sendTo(this->_nickName + " MODE :Not enough parameters" + "\r\n");
-	// 	return;
-	// }
 	std::string str = vec[0];
 	if (str[0] == '#' && str.length() > 2)
 		vec[0] = vec[0].substr(1);
