@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cctype>
 #include "Server.hpp"
+#include "Channel.hpp"
 
 class Client
 {
@@ -68,17 +69,16 @@ class Client
 		int getFd() const;
 
 		//----------------Command---------------
-		// void Kick();
+		void Kick();
 
 		//---------------
-		// void sendTo(std::string msg);
-		// bool isInvited(std::string channel);
-		// void Invite();
+		void sendTo(std::string msg);
+		bool isInvited(std::string channel);
+		void Invite();
 
 		//---------------
-		// void Mode();
-
-// void Topic();
+		void checkFlag(std::string channel);
+		void Mode();
 
 		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);

@@ -85,13 +85,19 @@ void Client::executeJoin(std::vector<std::string> &vec)
 					// this->setMaxChannel(num++);
 					// if (Server::_channels[index]._passSet &&  Server::_channels[index].getChannelPassword() == it->second)
 					Server::_channels[index].getChannel().push_back(*this);
+					std::cout << this->_nickName << " is add to exist channel\n";
 					// else if (!Server::_channels[index]._passSet)
 					// 	Server::_channels[index].getChannel().push_back(*this);
 					// else
 					// 	sendRepance(":FT_IRC.1337.ma 403 " +  this->_nickName  + " " + vec[0] + " :invalid password \r\n");
 				}
 				else if (index == -1)
+				{
 					addNewChannel(channelName);
+					std::cout << this->_nickName << " is add to new channel\n";
+				}
+				else
+					std::cout << "error in channel\n";
 			}
 			else
 				sendRepance(":FT_IRC.1337.ma 403 " +  this->_nickName  + " " + vec[0] + " :No such channel\r\n");
