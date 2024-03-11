@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cctype>
 #include "Server.hpp"
+#include "Channel.hpp"
 
 class Client
 {
@@ -76,9 +77,8 @@ class Client
 		void Invite();
 
 		//---------------
+		void checkFlag(std::string channel);
 		void Mode();
-
-// void Topic();
 
 		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);

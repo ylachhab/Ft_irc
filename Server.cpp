@@ -59,11 +59,33 @@ bool Server::isMember(std::string channel, std::string nickName) {
 	return false;
 }
 
-int Server::findChannel(std::string channel) {
+bool Server::findChannel(std::string channel) {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
 		if (_channels[i].getChannelName() == channel)
-			return _channels[i].getOperator();
+			return true;
+	}
+	return false;
+}
+
+int Server::retChannel(std::string channel) {
+	for (size_t i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].getChannelName() == channel)
+			return i;
+	}
+	return 0;
+}
+
+int Server::findOperator(std::string channel, std::string nick) {
+	for (size_t i = 0; i < _channels.size(); i++)
+	{
+		if (_channels[i].getChannelName() == channel)
+		{
+			if(_channels[i].isOperator(nick) == -1)
+				return -1;
+			return _channels[i].isOperator(nick);
+		}
 	}
 	return -1;
 }

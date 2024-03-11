@@ -137,13 +137,18 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-		if (cmd == "PASS")
+		// for (size_t i = 0; i < vec.size(); i++)
+		// {
+		// 	std::cout << vec[i] << " ";
+		// }
+		// std::cout << std::endl;
+		if (cmd == "PASS" ||  cmd == "pass")
 			executePass(vec);
-		else if (cmd == "NICK")
+		else if (cmd == "NICK" || cmd == "nick")
 			executeNick(vec);
-		else if (cmd == "USER")
+		else if (cmd == "USER" || cmd == "user")
 			executeUser(vec);
-		else if (cmd == "JOIN")
+		else if (cmd == "JOIN" || cmd == "join")
 			executeJoin(vec);
 		else if (cmd == "KICK" || cmd == "kick")
 			Kick();
@@ -151,18 +156,13 @@ void Client::parceCommand() {
 			Invite();
 		else if (cmd == "MODE" || cmd == "mode")
 			Mode();
-		// for (size_t i = 0; i < vec.size(); i++)
-		// {
-		// 	std::cout << vec[i] << " ";
-		// }
-		// std::cout << std::endl;
 		if (tmp.empty())
 		{
 			vec.clear();
 			break ;
 		}
 		vec.clear();
-}
+	}
 }
 
 void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {

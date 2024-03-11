@@ -21,29 +21,45 @@ Channel::~Channel() {
 
 }
 
+//---------Setter--------
+
 void Channel::setChannelName(std::string name) {
 	this->_channelName = name;
 }
+
+void Channel::setOperator(int oper, std::string nickname) {
+	this->_operator[oper] = nickname;
+}
+
+void Channel::setChannelPwd(std::string passw) {
+	this->ChannelPwd = passw;
+}
+
+void Channel::setlimitMbr(int nbr) {
+	this->limitMbr = nbr;
+}
+
+//---------Getter--------
 
 std::string Channel::getChannelName() {
 	return (this->_channelName);
 }
 
 std::string Channel::getChannelPassword() const{
-	return this->Channel_password;
+	return this->ChannelPwd;
 }
-
-// void Channel::setChannel(Client &cl) {
-// 	this->_channel.push_back(cl);
-// }
 
 std::vector<Client> &Channel::getChannel()
 {
 	return this->_channel;
 }
 
-void Channel::setOperator(int oper, std::string nickname) {
-	this->_operator[oper] = nickname;
+std::string Channel::getChannelPwd() const {
+	return this->ChannelPwd;
+}
+
+int Channel::getlimitMbr() const {
+	return this->limitMbr;
 }
 
 std::string Channel::getChannelName() const {
@@ -66,8 +82,6 @@ bool Channel::isAMember(std::string nick)
 }
 
 void Channel::eraseMember(std::string nick) {
-	// if (std::find(_channel.begin(), _channel.end(), obj) != _channel.end())
-	// 	_channel.erase(std::find(_channel.begin(), _channel.end(), obj));
 	for (size_t i = 0; i < _channel.size(); i++)
 	{
 		if (_channel[i].getNickName() == nick)
@@ -75,6 +89,31 @@ void Channel::eraseMember(std::string nick) {
 	}
 }
 
-// Client Channel::ret(int i) {
-// 	return (_channel[i]);
-// }
+int Channel::isOperator(std::string nickname) {
+	for (std::map<int, std::string>::iterator it = _operator.begin(); it != _operator.end(); ++it)
+	{
+		if (it->second == nickname)
+			return it->first;
+	}
+	return -1;
+}
+
+ChannelMode::ChannelMode(){
+	_inviteOnly = false;
+	_topic = false;
+	_key = false;
+	_opera = false;
+	_limit = false;
+};
+
+bool ChannelMode::allOff(){
+	if (!_inviteOnly && !_topic && !_key && !_opera && !_limit)
+		return true;
+	return false;
+}
+
+bool ChannelMode::allOn(){
+	if (_inviteOnly && _topic && _key && _opera && _limit)
+		return true;
+	return false;
+}
