@@ -2,6 +2,7 @@
 
 Channel::Channel()
 {
+	this->_passSet = false;
 }
 
 Channel::Channel(const Channel& obj) {

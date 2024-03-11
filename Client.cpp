@@ -74,11 +74,11 @@ int Client::getFd() const
 	return this->_fd;
 }
 
-void Client::setFd(int max_channels)
+void Client::setMaxChannel(int max_channels)
 {
 	this->_maxChannel = max_channels;
 }
-int Client::getFd() const
+int Client::getMaxChannel() const
 {
 	return this->_maxChannel;
 }

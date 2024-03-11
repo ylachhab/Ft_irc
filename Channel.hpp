@@ -13,7 +13,7 @@ class Channel {
 		std::string _channelName;
 		std::vector <Client > _channel;
 		std::string Channel_password; // the password of a channel
-		int limit_member; // max member of client can a channel hold
+		// int limit_member; // max member of client can a channel hold
 		std::map<int, std::string> _operator;
 	public :
 		bool _passSet; // true if +k is set in this channel

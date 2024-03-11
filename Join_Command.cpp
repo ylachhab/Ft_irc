@@ -34,11 +34,13 @@ int existChannel(std::string channelName)
 	return -1;
 }
 
-bool ClientExistInChannel(Client *client)
+bool ClientExistInChannel(Client *client, int index)
 {
-	for (size_t i = 0; i < Server::_channels.size(); i++)
+	if (index == -1)
+		return false;
+	for (size_t i = 0; i < Server::_channels[index].getChannel().size(); i++)
 	{
-		if (Server::_channels[i].isAMember(client->getNickName()))
+		if (Server::_channels[index].getChannel()[i].getNickName() ==  client->getNickName())
 			return true;
 	}
 	return false;
@@ -55,6 +57,8 @@ void Client::addNewChannel(std::string channelName)
 	this->setMaxChannel(num++);
 }
 
+
+
 void Client::executeJoin(std::vector<std::string> &vec)
 {
 	std::string tmp;
@@ -63,12 +67,14 @@ void Client::executeJoin(std::vector<std::string> &vec)
 		std::vector<std::pair<std::string, std::string> > v = splitChannels(vec[0], vec[1], vec.size());
 		for (std::vector<std::pair<std::string, std::string> >::iterator it = v.begin(); it != v.end(); it++)
 		{
-			if (it->first[0] == '#' || it->first[0] == '&')
+			if (it->first[0] == '#')
 			{
 				std::string channelName = it->first.substr(1, it->first.size() - 1);
 				int index;
 				index = existChannel(channelName);
-				if(index != -1 && !ClientExistInChannel(this) && this->getMaxChannel() < 10)
+				// std::cout << index << " " << channelName ;
+				// std::cout<< " " << ClientExistInChannel(this, index) <<'\n';
+				if(index != -1 && !ClientExistInChannel(this, index) && this->getMaxChannel() < 10)
 				{
 					int num = this->getMaxChannel();
 					this->setMaxChannel(num++);
@@ -77,16 +83,26 @@ void Client::executeJoin(std::vector<std::string> &vec)
 					// else if (!Server::_channels[index]._passSet)
 					// 	Server::_channels[index].getChannel().push_back(*this);
 					// else
-					// 	sendRepance(":yasmine 403 " +  this->_nickName  + " " + vec[0] + " :invalid password \r\n");
+					// 	sendRepance(":FT_IRC.1337.ma 403 " +  this->_nickName  + " " + vec[0] + " :invalid password \r\n");
 				}
 				else if (index == -1)
 					addNewChannel(channelName);
 			}
 			else
-				sendRepance(":yasmine 403 " +  this->_nickName  + " " + vec[0] + " :No such channel\r\n");
+				sendRepance(":FT_IRC.1337.ma 403 " +  this->_nickName  + " " + vec[0] + " :No such channel\r\n");
 		}
 		v.clear();
 	}
 	else
-		sendRepance(":yasmine 451 " + this->_nickName + " :Register first.\r\n");
+		sendRepance(":FT_IRC.1337.ma 451 " + this->_nickName + " :Register first.\r\n");
+	// for (size_t i = 0; i < Server::_channels.size(); i++)
+	// {
+	// 	std::cout << "=========== channel number " << i  << ":\n" <<  Server::_channels[i].getChannelName() << " =============\n";
+	// 	puts("******************** Channel Members *************************");
+	// 	for (size_t i = 0; i < Server::_channels[i].getChannel().size(); i++)
+	// 	{
+	// 		std::cout << "-> " << Server::_channels[i].getChannel()[i].getNickName() << "\n";
+	// 	}
+	// }
+	
 }
