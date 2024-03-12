@@ -1,6 +1,5 @@
 #include "Client.hpp"
-#include "Server.hpp"
-#include "Channel.hpp"
+
 
 /******************* JOIN Command **********************/
 std::vector<std::pair<std::string, std::string> > splitChannels
@@ -12,10 +11,8 @@ std::vector<std::pair<std::string, std::string> > splitChannels
 	split_channel << channels_Name;
 	if (size < 2)
 	{
-		puts("hi");
-		std::string empty  = "";
 		while (std::getline(split_channel, channel, ','))
-			vec.push_back(std::make_pair(channel, empty));
+			vec.push_back(std::make_pair(channel, ""));
 	}
 	else
 	{
@@ -28,6 +25,25 @@ std::vector<std::pair<std::string, std::string> > splitChannels
 	return vec;
 }
 
+std::string removeExtraChar(const std::string& input, char del) {
+	std::string result;
+	bool charFlag = false;
+
+	for (size_t i = 0; i < input.size(); ++i) {
+		if (input[i] == del) {
+			if (!charFlag) {
+				result += del;
+				charFlag = true;
+			}
+		} else {
+			result += input[i];
+			charFlag = false;
+		}
+	}
+	if (!result.empty() && result[result.size() - 1] == del)
+		result.erase(result.size() - 1);
+	return result;
+}
 
 int existChannel(std::string channelName)
 {
@@ -39,83 +55,68 @@ int existChannel(std::string channelName)
 	return -1;
 }
 
-bool ClientExistInChannel(Client *client, int index)
-{
-	if (index == -1)
-		return false;
-	for (size_t i = 0; i < Server::_channels[index].getChannel().size(); i++)
-	{
-		if (Server::_channels[index].getChannel()[i].getNickName() ==  client->getNickName())
-			return true;
-	}
-	return false;
-}
-
 void Client::addNewChannel(std::string channelName)
 {
 	Channel channel;
+	channel._channelMode._key = true;
+	channel.setChannelPwd("hello");
 	channel.setChannelName(channelName);
 	channel.setOperator(this->_fd, this->getNickName());
 	channel.getChannel().push_back(*this);
 	Server::_channels.push_back(channel);
-	// int num = this->getMaxChannel();
-	// this->setMaxChannel(num++);
 }
 
-
+bool Client::checkMods(Channel &channel, std::vector<std::pair<std::string, std::string> >::iterator it)
+{
+	std::vector<std::string>::iterator itr = std::find(channelInvite.begin(), channelInvite.end(), channel.getChannelName());
+	if (channel._channelMode._inviteOnly && itr != channelInvite.end())
+		return true;
+	else if (channel._channelMode._key && it->second == channel.getChannelPwd())
+		return true;
+	else if (channel._channelMode._limit && channel.getChannel().size() < static_cast<size_t>(channel.getlimitMbr()))
+		return true;
+	else if (channel._channelMode.IKLoff() && !Server::isMember(channel.getChannelName(), this->getNickName()))
+	{
+		std::cout << channel._channelMode.IKLoff() << Server::isMember(channel.getChannelName(), this->getNickName()) << "\n";
+		return true;
+	}
+	return false;
+}
 
 void Client::executeJoin(std::vector<std::string> &vec)
 {
-	std::string tmp;
+	std::string tmp = removeExtraChar(vec[0], ',');
 	if (this->_registred)
 	{
-		std::vector<std::pair<std::string, std::string> > v = splitChannels(vec[0], vec[1], vec.size());
-		for (std::vector<std::pair<std::string, std::string> >::iterator it = v.begin(); it != v.end(); it++)
+		std::vector<std::pair<std::string, std::string> > v = splitChannels(tmp, vec[1], vec.size());
+		for (std::vector<std::pair<std::string, std::string> >::iterator it = v.begin(); it != v.end() ; it++)
 		{
 			if (it->first[0] == '#')
 			{
-				std::string channelName = it->first.substr(1, it->first.size() - 1);
+				std::string channelName = it->first;
 				int index;
 				index = existChannel(channelName);
-				// std::cout << index << " " << channelName ;
-				// std::cout<< " " << ClientExistInChannel(this, index) <<'\n';
-				if(index != -1 && !ClientExistInChannel(this, index) && this->getMaxChannel() < 10)
+				if(index != -1 && checkMods(Server::_channels[index], it))
 				{
-					// int num = this->getMaxChannel();
-					// this->setMaxChannel(num++);
-					// if (Server::_channels[index]._passSet &&  Server::_channels[index].getChannelPassword() == it->second)
 					Server::_channels[index].getChannel().push_back(*this);
-					std::cout << this->_nickName << " is add to exist channel\n";
-					// else if (!Server::_channels[index]._passSet)
-					// 	Server::_channels[index].getChannel().push_back(*this);
-					// else
-					// 	sendRepance(":FT_IRC.1337.ma 403 " +  this->_nickName  + " " + vec[0] + " :invalid password \r\n");
+					std::string clients = Server::concatenateClients(Server::_channels[index]);
+					sendRepance(RPL_NAMREPLY(Server::_hostname, clients, channelName, this->_nickName));
+					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, channelName));
 				}
 				else if (index == -1)
 				{
 					addNewChannel(channelName);
-					std::cout << this->_nickName << " is add to new channel\n";
+					sendRepance(RPL_NAMREPLY(Server::_hostname, "@" + this->_nickName, channelName,  this->_nickName));
+					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, channelName));
 				}
 				else
 					std::cout << "error in channel\n";
 			}
 			else
-				sendRepance(":FT_IRC.1337.ma 403 " +  this->_nickName  + " " + vec[0] + " :No such channel\r\n");
+				sendRepance(ERR_NOSUCHCHANNEL(Server::_hostname, it->first, this->_nickName));
 		}
 		v.clear();
 	}
 	else
-		sendRepance(":FT_IRC.1337.ma 451 " + this->_nickName + " :Register first.\r\n");
-
-	// std::cout << "-> " << Server::_channels.size() << "\n";
-	// for (size_t i = 0; i < Server::_channels.size(); i++)
-	// {
-	// 	std::cout << "=========== channel number " << i  << ":\n" <<  Server::_channels[i].getChannelName() << " =============\n";
-	// 		puts("******************** Channel Members *************************");
-	// 	for (size_t j = 0; j < Server::_channels[i].getChannel().size(); j++)
-	// 	{
-
-	// 		std::cout << "-> " << Server::_channels[i].getChannel()[j].getNickName() << "\n";
-	// 	}
-	// }
+		sendRepance(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }

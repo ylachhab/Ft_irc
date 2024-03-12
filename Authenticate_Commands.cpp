@@ -25,7 +25,7 @@ bool specialCharacter(std::string &str)
 void Client::executePass(std::vector<std::string> &vec)
 {
 	if (this->_registred)
-		sendRepance(":FT_IRC.1337.ma 462 " + this->_nickName + " :You may not reregister\r\n");
+		sendRepance(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
 	else
 	{
 		if (vec.size() && !vec[0].empty())
@@ -36,11 +36,11 @@ void Client::executePass(std::vector<std::string> &vec)
 			else
 			{
 				this->_authenticated = false;
-				sendRepance(":FT_IRC.1337.ma 464 " + this->_nickName + " :Password incorrect\r\n");
+				sendRepance(ERR_PASSWDMISMATCH(this->_nickName, Server::_hostname));
 			}
 		}
 		else
-			sendRepance(":FT_IRC.1337.ma  461 " + this->_nickName + " :Not enough parameters");
+			sendRepance(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
 	}
 }
 
@@ -54,7 +54,7 @@ void Client::executeNick(std::vector<std::string> &vec)
 		{
 			if (Server::cObjs[i]._nickName == vec[0])
 			{
-				sendRepance(":yasmin 433 " + this->_nickName + " " + vec[0] + " :Nickname is already in use\r\n");
+				sendRepance(ERR_NICKNAMEINUSE(this->_nickName, Server::_hostname));
 				return ;
 			}
 		}
@@ -66,42 +66,36 @@ void Client::executeNick(std::vector<std::string> &vec)
 				this->_nickName = vec[0];
 			}
 			else
-				sendRepance(":FT_IRC.1337.ma 432 " + this->_nickName  + " " + vec[0] + " :Erroneous Nickname\r\n");
+				sendRepance(ERR_ERRONEUSNICKNAME(this->_nickName, Server::_hostname));
 		}
 		else
-			sendRepance(":FT_IRC.1337.ma 431 " + this->_nickName  + " :No nickname given\r\n");
+			sendRepance(ERR_NONICKNAMEGIVEN(this->_nickName, Server::_hostname));
 	}
 	else
-		sendRepance(":FT_IRC.1337.ma 451 " + this->_nickName + " :Register first(set the password)\r\n");
+		sendRepance(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }
 
 /******************* USER Command **********************/
 void Client::executeUser(std::vector<std::string> &vec)
 {
 	if (this->_registred)
-		sendRepance(":FT_IRC.1337.ma 462 " + this->_nickName + " :You may not reregister\r\n");
+		sendRepance(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
 	if (this->_pass && this->_nick && this->_authenticated)
 	{
 		if (vec.size() >= 4)
 		{
-			// if(specialCharacter(vec[0]) == 0)
-			// {
 			this->_userName = vec[0];
 			this->_realName = vec[3];
 			this->_user = true;
 			this->_registred = true;
-			std::cout << "the user " << this->_userName << " was successfully regestred ";
-			if (this->_authenticated)
-				std::cout << "and authenticated!\n";
-			else
-				std::cout << "but not authenticated!\n";
-			// }
-			// else
-			// 	sendRepance(":FT_IRC.1337.ma 468 " + this->_nickName + " :Your username is invalid.\r\n");
+			sendRepance(RPL_WELCOME(this->_nickName, Server::_hostname));
+			sendRepance(RPL_YOURHOST(this->_nickName, Server::_hostname));
+			sendRepance(RPL_CREATED(this->_nickName, Server::_hostname));
+			sendRepance(RPL_MYINFO(this->_nickName, Server::_hostname));
 		}
 		else
-			sendRepance(":FT_IRC.1337.ma 461 " + this->_nickName + " USER :Not enough parameters\r\n");
+			sendRepance(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
 	}
 	else
-		sendRepance(":FT_IRC.1337.ma 451 " + this->_nickName + " :Register first(Set the password and a nickname)\r\n");
+		sendRepance(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }

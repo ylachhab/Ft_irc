@@ -2,6 +2,7 @@
 
 std::vector <Client > Server::cObjs;
 std::vector <Channel > Server::_channels;
+std::string  Server::_hostname = "FT_IRC.1337.ma";
 
 Server::Server()
 {
@@ -108,6 +109,20 @@ int isNumber(std::string str)
 	return (0);
 }
 
+std::string Server::concatenateClients(Channel &vec)
+{
+	std::string conStr;
+
+	for (size_t i = 0; i < vec.getChannel().size(); i++)
+	{
+		if (vec.isOperator(vec.getChannel()[i].getNickName()) != -1)
+			conStr += "@";
+		conStr += vec.getChannel()[i].getNickName();
+		conStr += " ";
+	}
+	return conStr;
+}
+
 int Server::get_socket() {
 	int socfd;
 	int yes = 1;
@@ -166,6 +181,7 @@ void Server::deletePfds(int i){
 }
 
 Server::Server(std::string port, std::string password) {
+
 	if (isNumber(port) || port.empty())
 	{
 		std::cout << "Error in port" << std::endl;

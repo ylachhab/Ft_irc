@@ -21,7 +21,7 @@ void Client::Kick() {
 	if (str[0] == '#' && str.length() > 2)
 		vec[0] = vec[0].substr(1);
 	else {
-		sendTo(this->_nickName + " " + str + " :No such channel" + "\r\n");
+		sendTo(this->_nickName + " " + str + " :No such channel++" + "\r\n");
 		return ;
 	}
 	if (!Server::findChannel(vec[0])) {

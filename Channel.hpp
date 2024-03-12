@@ -16,6 +16,7 @@ struct ChannelMode {
 	bool _limit;
 	ChannelMode();
 	bool allOn();
+	bool IKLoff();
 	bool allOff();
 };
 
@@ -42,7 +43,6 @@ class Channel {
 		//----------Getter-----------
 		std::string getChannelName();
 		std::string getChannelName() const;
-		std::string getChannelPassword() const;
 		std::vector<Client> &getChannel();
 		std::map<int, std::string> getOperator() const;
 		std::string getChannelPwd() const;

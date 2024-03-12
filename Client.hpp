@@ -18,6 +18,7 @@
 #include <cctype>
 #include "Server.hpp"
 #include "Channel.hpp"
+#include "Replies_msg.hpp"
 
 class Client
 {
@@ -37,7 +38,6 @@ class Client
 		bool		_nick;
 		bool		_user;
 		int			_fd;
-		int			_maxChannel;
 	public:
 		bool error;
 		//Orthodox canonical class form
@@ -53,7 +53,6 @@ class Client
 		//----------Setter---------
 		void setFd(int fd);
 		void setPassword(const std::string& pass);
-		void setMaxChannel(int max_channels);
 		// void setNickName(std::string nickName);
 		// void setUserName(std::string userName);
 		// void setAuthenticated(bool authenticated);
@@ -61,32 +60,30 @@ class Client
 
 		// //-------------Getter--------------
 		std::string getPassword() const;
-		int	 getMaxChannel() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
 		// bool getAuthenticated() const;
 		// bool getRegisted() const;
 		int getFd() const;
 
-		//----------------Command---------------
-		void Kick();
 
-		//---------------
+		//---------------Commands Utils---------------
 		void sendTo(std::string msg);
 		bool isInvited(std::string channel);
-		void Invite();
-
 		//---------------
 		void checkFlag(std::string channel);
-		void Mode();
-
+		//---------------
 		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);
-		//Commands
+		bool checkMods(Channel &channel, std::vector<std::pair<std::string, std::string> >::iterator it);
+		//----------------Command---------------
 		void executePass(std::vector<std::string> &vec);
 		void executeNick(std::vector<std::string> &vec);
 		void executeUser(std::vector<std::string> &vec);
 		void executeJoin(std::vector<std::string> &vec);
+		void Kick();
+		void Mode();
+		void Invite();
 };
 
 #endif

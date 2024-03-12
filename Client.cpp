@@ -9,7 +9,6 @@ Client::Client()
 	this->_nick = false;
 	this->_user = false;
 	this->_nickName = "*";
-	this->_maxChannel = 0;
 }
 
 Client::Client(const Client& obj)
@@ -74,13 +73,14 @@ int Client::getFd() const
 	return this->_fd;
 }
 
-void Client::setMaxChannel(int max_channels)
+
+/*************Parce && execute Commands*****************/
+
+std::string to_Upper(std::string str)
 {
-	this->_maxChannel = max_channels;
-}
-int Client::getMaxChannel() const
-{
-	return this->_maxChannel;
+	for (size_t i = 0; i < str.size(); i++)
+		str[i] = toupper(str[i]);
+	return str;
 }
 
 void Client::parceCommand() {
@@ -144,24 +144,19 @@ void Client::parceCommand() {
 				break;
 			continue;
 		}
-		// for (size_t i = 0; i < vec.size(); i++)
-		// {
-		// 	std::cout << vec[i] << " ";
-		// }
-		// std::cout << std::endl;
-		if (cmd == "PASS" ||  cmd == "pass")
+		if (to_Upper(cmd) == "PASS")
 			executePass(vec);
-		else if (cmd == "NICK" || cmd == "nick")
+		else if (to_Upper(cmd) == "NICK")
 			executeNick(vec);
-		else if (cmd == "USER" || cmd == "user")
+		else if (to_Upper(cmd) == "USER")
 			executeUser(vec);
-		else if (cmd == "JOIN" || cmd == "join")
+		else if (to_Upper(cmd) == "JOIN")
 			executeJoin(vec);
-		else if (cmd == "KICK" || cmd == "kick")
+		else if (to_Upper(cmd) == "KICK")
 			Kick();
-		else if (cmd == "INVITE" || cmd == "invite")
+		else if (to_Upper(cmd) == "INVITE")
 			Invite();
-		else if (cmd == "MODE" || cmd == "mode")
+		else if (to_Upper(cmd) == "MODE")
 			Mode();
 		if (tmp.empty())
 		{

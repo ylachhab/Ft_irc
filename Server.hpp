@@ -29,6 +29,7 @@ class Server
 	public:
 		static std::vector <Client> cObjs;
 		static std::vector <Channel > _channels;
+		static std::string _hostname;
 		Server();
 		Server(std::string port, std::string password);
 		Server(const Server& obj);
@@ -44,6 +45,7 @@ class Server
 		static int retFd( std::string nickName);
 		static void eraseMember(std::string channel, std::string nick);
 		static int retChannel(std::string channel);
+		static std::string concatenateClients(Channel& vec);
 };
 
 #endif

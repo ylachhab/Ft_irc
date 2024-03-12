@@ -45,10 +45,6 @@ std::string Channel::getChannelName() {
 	return (this->_channelName);
 }
 
-std::string Channel::getChannelPassword() const{
-	return this->ChannelPwd;
-}
-
 std::vector<Client> &Channel::getChannel()
 {
 	return this->_channel;
@@ -114,6 +110,12 @@ bool ChannelMode::allOff(){
 
 bool ChannelMode::allOn(){
 	if (_inviteOnly && _topic && _key && _opera && _limit)
+		return true;
+	return false;
+}
+
+bool ChannelMode::IKLoff(){
+	if (!_inviteOnly && !_key && !_limit)
 		return true;
 	return false;
 }
