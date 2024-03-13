@@ -111,7 +111,8 @@ void Client::Invite() {
 		// sendTo(this->_nickName + " " + vec[1] + " :You're not channel operator" + "\r\n");
 		return ;
 	}
-	channelInvite.push_back(vec[1].substr(1));
+	int i = Server::retClient(vec[0]);
+	Server::cObjs[i].channelInvite.push_back(vec[1]);
 	std::cout << "|" << channelInvite.size() << "|\n";
 	sendTo(Server::_hostname + " INVITE " + this->_nickName + " " + vec[1]+ "\r\n");
 	sendClient(Server::_hostname + " INVITE " + this->_nickName + " " + vec[0] + " " + vec[1]+ "\r\n", Server::retFd(vec[0]));

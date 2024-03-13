@@ -81,7 +81,7 @@ void Client::executeJoin(std::vector<std::string> &vec)
 		std::vector<std::pair<std::string, std::string> > v = splitChannels(tmp, vec[1], vec.size());
 		for (std::vector<std::pair<std::string, std::string> >::iterator it = v.begin(); it != v.end() ; it++)
 		{
-			if (it->first[0] == '#')
+			if (it->first[0] == '#' && it->first.length() > 2)
 			{
 				std::string channelName = it->first.substr(1);
 				int index = existChannel(channelName);
@@ -89,7 +89,6 @@ void Client::executeJoin(std::vector<std::string> &vec)
 				{
 					if (Server::_channels[index]._channelMode._inviteOnly)
 					{
-						std::cout << isInvited(Server::_channels[index].getChannelName()) << "\n";
 						if(isInvited(Server::_channels[index].getChannelName()))
 							addToExistChannel(index, channelName);
 						else
@@ -97,15 +96,15 @@ void Client::executeJoin(std::vector<std::string> &vec)
 					}
 					else if (Server::_channels[index]._channelMode._key && Server::_channels[index]._channelMode._limit)
 					{
-							if (Server::_channels[index].getChannel().size() < static_cast<size_t>(Server::_channels[index].getlimitMbr()))
-							{
-								if(it->second == Server::_channels[index].getKey())
-									addToExistChannel(index, channelName);
-								else
-									sendRepance(ERR_BADCHANNELKEY(this->_nickName, Server::_hostname, it->first));
-							}
+						if (Server::_channels[index].getChannel().size() < static_cast<size_t>(Server::_channels[index].getlimitMbr()))
+						{
+							if(it->second == Server::_channels[index].getKey())
+								addToExistChannel(index, channelName);
 							else
-								sendRepance(ERR_CHANNELISFULL(this->_nickName, it->first));
+								sendRepance(ERR_BADCHANNELKEY(this->_nickName, Server::_hostname, it->first));
+						}
+						else
+							sendRepance(ERR_CHANNELISFULL(this->_nickName, it->first));
 					}
 					else if (Server::_channels[index]._channelMode._limit)
 					{

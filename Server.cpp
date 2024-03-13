@@ -79,6 +79,15 @@ int Server::retChannel(std::string channel) {
 	return 0;
 }
 
+int Server::retClient(std::string client) {
+	for (size_t i = 0; i < cObjs.size(); i++)
+	{
+		if (cObjs[i].getNickName() == client)
+			return i;
+	}
+	return 0;
+}
+
 int Server::findOperator(std::string channel, std::string nick) {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{

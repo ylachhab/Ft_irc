@@ -46,6 +46,7 @@ class Server
 		static int retFd( std::string nickName);
 		static void eraseMember(std::string channel, std::string nick);
 		static int retChannel(std::string channel);
+		static int retClient(std::string client);
 		static std::string concatenateClients(Channel& vec);
 };
 
