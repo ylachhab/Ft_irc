@@ -2,7 +2,8 @@
 
 std::vector <Client > Server::cObjs;
 std::vector <Channel > Server::_channels;
-std::string  Server::_hostname = "FT_IRC.1337.ma";
+std::string Server::_hostname = "FT_IRC.1337.ma";
+std::string Server::_ipaddress = "localhost";
 
 Server::Server()
 {

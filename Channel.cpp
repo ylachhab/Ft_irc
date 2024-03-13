@@ -2,6 +2,7 @@
 
 Channel::Channel()
 {
+	this->channelTopic = "";
 }
 
 Channel::Channel(const Channel& obj) {
@@ -31,12 +32,16 @@ void Channel::setOperator(int oper, std::string nickname) {
 	this->_operator[oper] = nickname;
 }
 
-void Channel::setChannelPwd(std::string passw) {
-	this->ChannelPwd = passw;
-}
-
 void Channel::setlimitMbr(int nbr) {
 	this->limitMbr = nbr;
+}
+
+void Channel::setKey(std::string key) {
+	this->key = key;
+}
+
+void Channel::setChannelTopic(std::string topic) {
+	this->channelTopic = topic;
 }
 
 //---------Getter--------
@@ -50,9 +55,6 @@ std::vector<Client> &Channel::getChannel()
 	return this->_channel;
 }
 
-std::string Channel::getChannelPwd() const {
-	return this->ChannelPwd;
-}
 
 int Channel::getlimitMbr() const {
 	return this->limitMbr;
@@ -66,6 +68,15 @@ std::map<int, std::string> Channel::getOperator() const {
 	return _operator;
 }
 
+std::string Channel::getKey() const {
+	return this->key;
+}
+
+std::string Channel::getChannelTopic() const {
+	return this->channelTopic;
+}
+
+//--------------------------------------
 
 bool Channel::isAMember(std::string nick)
 {
@@ -83,6 +94,10 @@ void Channel::eraseMember(std::string nick) {
 		if (_channel[i].getNickName() == nick)
 			_channel.erase(_channel.begin() + i);
 	}
+}
+
+void Channel::eraseOperator(int fd) {
+	this->_operator.erase(fd);
 }
 
 int Channel::isOperator(std::string nickname) {
@@ -103,13 +118,13 @@ ChannelMode::ChannelMode(){
 };
 
 bool ChannelMode::allOff(){
-	if (!_inviteOnly && !_topic && !_key && !_opera && !_limit)
+	if (!_inviteOnly && !_topic && !_key && !_limit)
 		return true;
 	return false;
 }
 
 bool ChannelMode::allOn(){
-	if (_inviteOnly && _topic && _key && _opera && _limit)
+	if (_inviteOnly && _topic && _key && _limit)
 		return true;
 	return false;
 }

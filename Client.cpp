@@ -9,6 +9,7 @@ Client::Client()
 	this->_nick = false;
 	this->_user = false;
 	this->_nickName = "*";
+	this->flag = 0;
 }
 
 Client::Client(const Client& obj)
@@ -43,7 +44,8 @@ Client::~Client()
 {
 }
 
-/*************Getters & Setters*****************/
+//---------------Getter-----------------
+
 std::string Client::getPassword() const
 {
 	return this->_password;
@@ -59,6 +61,13 @@ std::string Client::getNickName() const
 	return this->_nickName;
 }
 
+// int Client::getFlag()
+// {
+// 	return this->flag;
+// }
+
+//---------------Setter-----------------
+
 void Client::setPassword(const std::string& pass)
 {
 	this->_password = pass;
@@ -72,6 +81,10 @@ int Client::getFd() const
 {
 	return this->_fd;
 }
+// int Client::getFlag()
+// {
+// 	return this->flag;
+// }
 
 
 /*************Parce && execute Commands*****************/
@@ -158,6 +171,8 @@ void Client::parceCommand() {
 			Invite();
 		else if (to_Upper(cmd) == "MODE")
 			Mode();
+		else if (cmd == "TOPIC" || cmd == "topic")
+			Topic();
 		if (tmp.empty())
 		{
 			vec.clear();

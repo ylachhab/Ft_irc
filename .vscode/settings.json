@@ -1,5 +1,9 @@
 {
 	"files.associations": {
+<<<<<<< HEAD
+=======
+		"iosfwd": "cpp",
+>>>>>>> yasmine
 		"__bit_reference": "cpp",
 		"__config": "cpp",
 		"__debug": "cpp",
@@ -37,7 +41,10 @@
 		"functional": "cpp",
 		"initializer_list": "cpp",
 		"ios": "cpp",
+<<<<<<< HEAD
 		"iosfwd": "cpp",
+=======
+>>>>>>> yasmine
 		"iostream": "cpp",
 		"istream": "cpp",
 		"iterator": "cpp",

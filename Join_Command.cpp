@@ -62,24 +62,15 @@ void Client::addNewChannel(std::string channelName)
 	channel.setOperator(this->_fd, this->getNickName());
 	channel.getChannel().push_back(*this);
 	Server::_channels.push_back(channel);
-	int index = existChannel(channelName);
-	//remove those 
-	Server::_channels[index]._channelMode._key = true;
-	Server::_channels[index].setChannelPwd("hello");
 }
 
-bool Client::checkMods(Channel &channel, std::vector<std::pair<std::string, std::string> >::iterator it)
+void Client::addToExistChannel(int index, std::string channelName)
 {
-	std::vector<std::string>::iterator itr = std::find(channelInvite.begin(), channelInvite.end(), channel.getChannelName());
-	if (channel._channelMode._inviteOnly && itr != channelInvite.end())
-		return true;
-	else if (channel._channelMode._key && it->second == channel.getChannelPwd())
-			return true;
-	else if (channel._channelMode._limit && channel.getChannel().size() < static_cast<size_t>(channel.getlimitMbr()))
-		return true;
-	else if (channel._channelMode.IKLoff() && !Server::isMember(channel.getChannelName(), this->getNickName()))
-		return true;
-	return false;
+	Server::_channels[index].getChannel().push_back(*this);
+	std::string clients = Server::concatenateClients(Server::_channels[index]);
+	sendRepance(RPL_JOIN(this->_nickName, this->_userName, channelName, Server::_ipaddress));
+	sendRepance(RPL_NAMREPLY(Server::_hostname, clients, "#" + channelName, this->_nickName));
+	sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
 }
 
 void Client::executeJoin(std::vector<std::string> &vec)
@@ -92,24 +83,55 @@ void Client::executeJoin(std::vector<std::string> &vec)
 		{
 			if (it->first[0] == '#')
 			{
-				std::string channelName = it->first;
-				int index;
-				index = existChannel(channelName);
-				if(index != -1 && checkMods(Server::_channels[index], it))
+				std::string channelName = it->first.substr(1);
+				int index = existChannel(channelName);
+				if (index != -1)
 				{
-					Server::_channels[index].getChannel().push_back(*this);
-					std::string clients = Server::concatenateClients(Server::_channels[index]);
-					sendRepance(RPL_NAMREPLY(Server::_hostname, clients, channelName, this->_nickName));
-					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, channelName));
+					if (Server::_channels[index]._channelMode._inviteOnly)
+					{
+						std::cout << isInvited(Server::_channels[index].getChannelName()) << "\n";
+						if(isInvited(Server::_channels[index].getChannelName()))
+							addToExistChannel(index, channelName);
+						else
+							sendRepance(ERR_INVITEONLY(this->_nickName, it->first));
+					}
+					else if (Server::_channels[index]._channelMode._key && Server::_channels[index]._channelMode._limit)
+					{
+							if (Server::_channels[index].getChannel().size() < static_cast<size_t>(Server::_channels[index].getlimitMbr()))
+							{
+								if(it->second == Server::_channels[index].getKey())
+									addToExistChannel(index, channelName);
+								else
+									sendRepance(ERR_BADCHANNELKEY(this->_nickName, Server::_hostname, it->first));
+							}
+							else
+								sendRepance(ERR_CHANNELISFULL(this->_nickName, it->first));
+					}
+					else if (Server::_channels[index]._channelMode._limit)
+					{
+						if (Server::_channels[index].getChannel().size() < static_cast<size_t>(Server::_channels[index].getlimitMbr()))
+							addToExistChannel(index, channelName);
+						else
+							sendRepance(ERR_CHANNELISFULL(this->_nickName, it->first));
+					}
+					else if (Server::_channels[index]._channelMode._key)
+					{
+						if(it->second == Server::_channels[index].getKey())
+							addToExistChannel(index, channelName);
+						else
+							sendRepance(ERR_BADCHANNELKEY(this->_nickName, Server::_hostname, it->first));
+					}
+					else if (Server::_channels[index]._channelMode.IKLoff() && !Server::isMember(Server::_channels[index].getChannelName(), this->getNickName()))
+						addToExistChannel(index, channelName);
 				}
 				else if (index == -1)
 				{
 					addNewChannel(channelName);
-					sendRepance(RPL_NAMREPLY(Server::_hostname, "@" + this->_nickName, channelName,  this->_nickName));
-					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, channelName));
+					sendRepance(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, Server::_ipaddress));
+					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
+					sendRepance(RPL_NAMREPLY(Server::_hostname, "@" + this->_nickName, "#" + channelName,  this->_nickName));
 				}
-				else
-					std::cout << "error in channel\n";
+
 			}
 			else
 				sendRepance(ERR_NOSUCHCHANNEL(Server::_hostname, it->first, this->_nickName));

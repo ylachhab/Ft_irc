@@ -38,6 +38,7 @@ class Client
 		bool		_nick;
 		bool		_user;
 		int			_fd;
+		int			flag;
 	public:
 		bool error;
 		//Orthodox canonical class form
@@ -71,18 +72,26 @@ class Client
 		void sendTo(std::string msg);
 		bool isInvited(std::string channel);
 		//---------------
+		bool checkError();
 		void checkFlag(std::string channel);
 		//---------------
+		void checkTopic(char sign, int index, std::string channel);
+		void checkInvite(char sign, int index, std::string channel);
+		void checkOperatorFlag(char sign, int index, std::string channel, std::string arg);
+		void checkKeyFlag(char sign, int index, std::string channel, std::string arg);
+		//---------------
+
 		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);
-		bool checkMods(Channel &channel, std::vector<std::pair<std::string, std::string> >::iterator it);
+		void addToExistChannel(int index, std::string channelName);
 		//----------------Command---------------
 		void executePass(std::vector<std::string> &vec);
 		void executeNick(std::vector<std::string> &vec);
 		void executeUser(std::vector<std::string> &vec);
 		void executeJoin(std::vector<std::string> &vec);
-		void Kick();
+		void Topic();
 		void Mode();
+		void Kick();
 		void Invite();
 };
 
