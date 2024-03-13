@@ -10,12 +10,11 @@ def connect_to_server(host, port, i):
         # Connect to the server
         client_socket.connect((host, port))
         
-        print(f"Connected to {host} on port {port}")
         
         # Send data to the server
-        message = "    hello    world\r\n hello  kdgj  \r\n glkj : kgf fgkbj gfklb\r\n"
+        message = "PASS 123\r\nNICK client{i}\r\nUSER u{i} 0 * :U{i}\r\n"
         client_socket.sendall(message.encode())
-        print("Message sent to server:", message) 
+        print("Message sent to server:", message)
         
         # Receive data from the server
         # response = client_socket.recv(1024)

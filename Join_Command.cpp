@@ -58,12 +58,14 @@ int existChannel(std::string channelName)
 void Client::addNewChannel(std::string channelName)
 {
 	Channel channel;
-	channel._channelMode._key = true;
-	channel.setChannelPwd("hello");
 	channel.setChannelName(channelName);
 	channel.setOperator(this->_fd, this->getNickName());
 	channel.getChannel().push_back(*this);
 	Server::_channels.push_back(channel);
+	int index = existChannel(channelName);
+	//remove those 
+	Server::_channels[index]._channelMode._key = true;
+	Server::_channels[index].setChannelPwd("hello");
 }
 
 bool Client::checkMods(Channel &channel, std::vector<std::pair<std::string, std::string> >::iterator it)
@@ -72,14 +74,11 @@ bool Client::checkMods(Channel &channel, std::vector<std::pair<std::string, std:
 	if (channel._channelMode._inviteOnly && itr != channelInvite.end())
 		return true;
 	else if (channel._channelMode._key && it->second == channel.getChannelPwd())
-		return true;
+			return true;
 	else if (channel._channelMode._limit && channel.getChannel().size() < static_cast<size_t>(channel.getlimitMbr()))
 		return true;
 	else if (channel._channelMode.IKLoff() && !Server::isMember(channel.getChannelName(), this->getNickName()))
-	{
-		std::cout << channel._channelMode.IKLoff() << Server::isMember(channel.getChannelName(), this->getNickName()) << "\n";
 		return true;
-	}
 	return false;
 }
 
