@@ -2,6 +2,7 @@
 
 Channel::Channel()
 {
+	this->channelTopic = "";
 }
 
 Channel::Channel(const Channel& obj) {
@@ -39,6 +40,14 @@ void Channel::setlimitMbr(int nbr) {
 	this->limitMbr = nbr;
 }
 
+void Channel::setKey(std::string key) {
+	this->key = key;
+}
+
+void Channel::setChannelTopic(std::string topic) {
+	this->channelTopic = topic;
+}
+
 //---------Getter--------
 
 std::string Channel::getChannelName() {
@@ -70,6 +79,15 @@ std::map<int, std::string> Channel::getOperator() const {
 	return _operator;
 }
 
+std::string Channel::getKey() const {
+	return this->key;
+}
+
+std::string Channel::getChannelTopic() const {
+	return this->channelTopic;
+}
+
+//--------------------------------------
 
 bool Channel::isAMember(std::string nick)
 {
@@ -87,6 +105,10 @@ void Channel::eraseMember(std::string nick) {
 		if (_channel[i].getNickName() == nick)
 			_channel.erase(_channel.begin() + i);
 	}
+}
+
+void Channel::eraseOperator(int fd) {
+	this->_operator.erase(fd);
 }
 
 int Channel::isOperator(std::string nickname) {
@@ -107,13 +129,13 @@ ChannelMode::ChannelMode(){
 };
 
 bool ChannelMode::allOff(){
-	if (!_inviteOnly && !_topic && !_key && !_opera && !_limit)
+	if (!_inviteOnly && !_topic && !_key && !_limit)
 		return true;
 	return false;
 }
 
 bool ChannelMode::allOn(){
-	if (_inviteOnly && _topic && _key && _opera && _limit)
+	if (_inviteOnly && _topic && _key && _limit)
 		return true;
 	return false;
 }

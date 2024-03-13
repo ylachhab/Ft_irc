@@ -29,6 +29,7 @@ class Server
 	public:
 		static std::vector <Client> cObjs;
 		static std::vector <Channel > _channels;
+		static std::string _hostname;
 		Server();
 		Server(std::string port, std::string password);
 		Server(const Server& obj);

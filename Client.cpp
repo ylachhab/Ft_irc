@@ -44,7 +44,8 @@ Client::~Client()
 {
 }
 
-/*************Getters & Setters*****************/
+//---------------Getter-----------------
+
 std::string Client::getPassword() const
 {
 	return this->_password;
@@ -59,6 +60,8 @@ std::string Client::getNickName() const
 {
 	return this->_nickName;
 }
+
+//---------------Setter-----------------
 
 void Client::setPassword(const std::string& pass)
 {
@@ -156,6 +159,8 @@ void Client::parceCommand() {
 			Invite();
 		else if (cmd == "MODE" || cmd == "mode")
 			Mode();
+		else if (cmd == "TOPIC" || cmd == "topic")
+			Topic();
 		if (tmp.empty())
 		{
 			vec.clear();

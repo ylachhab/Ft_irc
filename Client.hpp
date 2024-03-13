@@ -18,6 +18,7 @@
 #include <cctype>
 #include "Server.hpp"
 #include "Channel.hpp"
+#include "Message.hpp"
 
 class Client
 {
@@ -77,8 +78,16 @@ class Client
 		void Invite();
 
 		//---------------
+		bool checkError();
 		void checkFlag(std::string channel);
+		void checkTopic(char sign, int index, std::string channel);
+		void checkInvite(char sign, int index, std::string channel);
+		void checkOperatorFlag(char sign, int index, std::string channel, std::string arg);
+		void checkKeyFlag(char sign, int index, std::string channel, std::string arg);
 		void Mode();
+		
+		//---------------
+		void Topic();
 
 		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);
