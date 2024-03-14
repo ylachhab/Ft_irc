@@ -26,7 +26,7 @@ void Client::Kick() {
 		return ;
 	}
 	std::string str = vec[0];
-	if (str[0] == '#' && str.length() > 2)
+	if (str[0] == '#' && str.length() > 1)
 		vec[0] = vec[0].substr(1);
 	else {
 		sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, str, this->_nickName));
@@ -90,7 +90,7 @@ void Client::Invite() {
 	}
 	std::string str = vec[1];
 	std::cout << str[1] << std::endl;
-	if (str[0] == '#' && str.length() > 2)
+	if (str[0] == '#' && str.length() > 1)
 		vec[1] = vec[1].substr(1);
 	else {
 		sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, str, this->_nickName));
@@ -127,7 +127,7 @@ void Client::Topic() {
 		return ;
 	}
 	std::string str = vec[0];
-	if (str[0] == '#' && str.length() > 2)
+	if (str[0] == '#' && str.length() > 1)
 		vec[0] = vec[0].substr(1);
 	else {
 		sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, str, this->_nickName));
