@@ -23,7 +23,6 @@ class Channel {
 	private :
 		std::string _channelName;
 		std::vector <Client > _channel;
-		std::string ChannelPwd; // the password of a channel
 		int limitMbr; // max member of client can a channel hold
 		std::string key;
 		std::map<int, std::string> _operator;
@@ -38,7 +37,6 @@ class Channel {
 		//----------Setter-----------
 		void setChannelName(std::string name);
 		void setOperator(int oper, std::string nickname);
-		void setChannelPwd(std::string passw);
 		void setlimitMbr(int nbr);
 		void setKey(std::string key);
 		void setChannelTopic(std::string topic);
@@ -46,10 +44,8 @@ class Channel {
 		//----------Getter-----------
 		std::string getChannelName();
 		std::string getChannelName() const;
-		std::string getChannelPassword() const;
 		std::vector<Client> &getChannel();
 		std::map<int, std::string> getOperator() const;
-		std::string getChannelPwd() const;
 		int getlimitMbr() const;
 		std::string getKey() const;
 		std::string getChannelTopic() const;

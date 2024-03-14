@@ -78,6 +78,15 @@ int Server::retChannel(std::string channel) {
 	return 0;
 }
 
+int Server::retClient(std::string Client) {
+	for (size_t i = 0; i < cObjs.size(); i++)
+	{
+		if (cObjs[i].getNickName() == Client)
+			return i;
+	}
+	return 0;
+}
+
 int Server::findOperator(std::string channel, std::string nick) {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
@@ -116,7 +125,7 @@ int Server::get_socket() {
 
 	struct addrinfo hints, *ai, *p;
 	std::memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 	if ((rv = getaddrinfo(NULL, this->port.c_str(), &hints, &ai)))
@@ -157,9 +166,7 @@ void Server::addToPfds(int newfd){
 }
 
 void *getAddr(struct sockaddr *sa) {
-	if (sa->sa_family == AF_INET)
-		return &((struct sockaddr_in *)sa)->sin_addr;
-	return &((struct sockaddr_in6 *) sa)->sin6_addr;
+	return &((struct sockaddr_in *)sa)->sin_addr;
 }
 
 void Server::deletePfds(int i){
@@ -208,8 +215,13 @@ Server::Server(std::string port, std::string password) {
 					}
 					else {
 						Client cObj;
-						cObj.setPassword(this->password);
+						char *ipStr;
+						struct sockaddr_in* AddrV4 = (struct sockaddr_in*)&cAddr;
+						ipStr = inet_ntoa(AddrV4->sin_addr);
 						addToPfds(newFd);
+						cObj.setPassword(this->password);
+						cObj.setClientIp(ipStr);
+						std::cout << ipStr << std::endl;
 						cObj.setFd(newFd);
 						cObjs.push_back(cObj);
 						std::cout << "pollserver: new connection from " << inet_ntop(cAddr.ss_family, 

@@ -55,7 +55,7 @@ void Client::checkFlag(std::string channel) {
 		std::string lim;
 		ss >> lim;
 		sendTo(":" + Server::_hostname + " 324 " + this->_nickName + " #" + channel + " +" + sub + " " + lim + " "
-			+ Server::_channels[i].getChannelPwd() + "\r\n");
+			+ Server::_channels[i].getKey() + "\r\n");
 	}
 	else if (Server::_channels[i]._channelMode._limit)
 	{
@@ -66,7 +66,7 @@ void Client::checkFlag(std::string channel) {
 	}
 	else if (Server::_channels[i]._channelMode._key)
 		sendTo(":" + Server::_hostname + " 324 " + this->_nickName + " #" + channel + " +" + sub + " "
-			+ Server::_channels[i].getChannelPwd() + "\r\n");
+			+ Server::_channels[i].getKey() + "\r\n");
 	else
 		sendTo(":" + Server::_hostname + " 324 " + this->_nickName + " #" + channel + " +" + sub + "\r\n");
 }
@@ -75,12 +75,16 @@ void Client::checkTopic(char sign, int index, std::string channel) {
 	if (!Server::_channels[index]._channelMode._topic && sign == '+')
 	{
 		Server::_channels[index]._channelMode._topic = true;
-		sendTo(":" + Server::_hostname + " " + this->_nickName + " Mode " + channel + " +t" + "\r\n");
+		sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +t" + "\r\n");
+		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
+			+ channel + " +t" + "\r\n", channel.substr(1));
 	}
 	if (Server::_channels[index]._channelMode._topic && sign == '-')
 	{
 		Server::_channels[index]._channelMode._topic = false;
-		sendTo(":" + Server::_hostname + " " + this->_nickName + " Mode " + channel + " -t" + "\r\n");
+		sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -t" + "\r\n");
+		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
+			+ channel + " -t" + "\r\n", channel.substr(1));
 	}
 }
 
@@ -88,12 +92,16 @@ void Client::checkInvite(char sign, int index, std::string channel) {
 	if (!Server::_channels[index]._channelMode._inviteOnly && sign == '+')
 	{
 		Server::_channels[index]._channelMode._inviteOnly = true;
-		sendTo(":" + Server::_hostname + " " + this->_nickName + " Mode " + channel + " +i" + "\r\n");
+		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +i" + "\r\n");
+		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
+			+ channel + " +i" + "\r\n", channel.substr(1));
 	}
 	if (Server::_channels[index]._channelMode._inviteOnly && sign == '-')
 	{
 		Server::_channels[index]._channelMode._inviteOnly = false;
-		sendTo(":" + Server::_hostname + " " + this->_nickName + " Mode " + channel + " -i" + "\r\n");
+		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -i" + "\r\n");
+		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
+			+ channel + " -i" + "\r\n", channel.substr(1));
 	}
 }
 
@@ -104,26 +112,29 @@ void Client::checkOperatorFlag(char sign, int index, std::string channel, std::s
 		sendTo(ERR_USERNOTINCHANNEL(Server::_hostname, vec[0]));
 	else if (Server::findOperator(vec[0], arg) == -1 && sign == '+') {
 		Server::_channels[index].setOperator(Server::retFd(arg), arg);
-		sendTo(":" + Server::_hostname +  " MODE " + channel + " +o " + arg + "\r\n");
+		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +o " + arg + "\r\n");
+		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
+			+ channel + " +o " + arg + "\r\n", channel.substr(1));
 	}
 	else if (Server::findOperator(vec[0], arg) != -1 && sign == '-') {
 		Server::_channels[index].eraseOperator(Server::retFd(arg));
-		sendTo(":" + Server::_hostname +  " MODE " + channel + " -o " + arg + "\r\n");
+		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -o " + arg + "\r\n");
+		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
+			+ channel + " -o " + arg + "\r\n", channel.substr(1));
 	}
 }
 
 void Client::checkKeyFlag(char sign, int index, std::string channel, std::string arg){
-	std::cout << "--" << sign << "--" << index << "--" << channel << "--" << arg << std::endl;
 	if (sign == '+' && !Server::_channels[index]._channelMode._key) {
 		Server::_channels[index]._channelMode._key = true;
 		Server::_channels[index].setKey(arg);
-		sendTo(":" + this->_nickName + " MODE " + channel + " +k " + arg + "\r\n");
+		sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +k " + arg + "\r\n");
 	}
 	else if (sign == '-' && Server::_channels[index]._channelMode._key
 		&& Server::_channels[index].getKey() == arg) {
 		Server::_channels[index]._channelMode._key = false;
 		Server::_channels[index].setKey("");
-		sendTo(":" + this->_nickName + " MODE " + channel + " -k " + arg + "\r\n");
+		sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -k " + arg + "\r\n");
 	}
 	else if ((sign == '+' && Server::_channels[index]._channelMode._key)
 		|| (sign == '-' && !Server::_channels[index]._channelMode._key)
@@ -182,14 +193,14 @@ void Client::Mode() {
 						if (!isNbr(vec[i + 1]) && !Server::_channels[index]._channelMode._limit && atoi(vec[i + 1].c_str()) > 0) {
 							Server::_channels[index].setlimitMbr(atoi(vec[i + 1].c_str()));
 							Server::_channels[index]._channelMode._limit = true;
-							sendTo(":" + Server::_hostname +  " MODE " + str + " +l " + vec[i + 1] + "\r\n");
+							sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + str + " +l " + vec[i + 1] + "\r\n");
 						}
 						vec.erase(vec.begin() + i + 1);
 					}
 					if (sign == '-' && Server::_channels[index]._channelMode._limit) {
 						Server::_channels[index].setlimitMbr(0);
 						Server::_channels[index]._channelMode._limit = false;
-						sendTo(":" + Server::_hostname +  " MODE " + str + " -l " + "\r\n");
+						sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp +  " MODE " + str + " -l " + "\r\n");
 					}
 					break;
 				case  'k':

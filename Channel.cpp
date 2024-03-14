@@ -32,9 +32,6 @@ void Channel::setOperator(int oper, std::string nickname) {
 	this->_operator[oper] = nickname;
 }
 
-void Channel::setChannelPwd(std::string passw) {
-	this->ChannelPwd = passw;
-}
 
 void Channel::setlimitMbr(int nbr) {
 	this->limitMbr = nbr;
@@ -54,18 +51,11 @@ std::string Channel::getChannelName() {
 	return (this->_channelName);
 }
 
-std::string Channel::getChannelPassword() const{
-	return this->ChannelPwd;
-}
-
 std::vector<Client> &Channel::getChannel()
 {
 	return this->_channel;
 }
 
-std::string Channel::getChannelPwd() const {
-	return this->ChannelPwd;
-}
 
 int Channel::getlimitMbr() const {
 	return this->limitMbr;

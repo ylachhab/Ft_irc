@@ -39,6 +39,7 @@ class Client
 		bool		_user;
 		int			_fd;
 		int			_maxChannel;
+		char		clientIp[INET_ADDRSTRLEN];
 	public:
 		bool error;
 		//Orthodox canonical class form
@@ -54,6 +55,7 @@ class Client
 		//----------Setter---------
 		void setFd(int fd);
 		void setPassword(const std::string& pass);
+		void setClientIp(std::string ip);
 		// void setMaxChannel(int max_channels);
 		// void setNickName(std::string nickName);
 		// void setUserName(std::string userName);
@@ -62,6 +64,7 @@ class Client
 
 		// //-------------Getter--------------
 		std::string getPassword() const;
+		// void getClientIp(std::string ip);
 		// int	 getMaxChannel() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
@@ -70,6 +73,7 @@ class Client
 		int getFd() const;
 
 		//----------------Command---------------
+		void sendClients(std::string msg, std::string channel);
 		void Kick();
 
 		//---------------
