@@ -24,7 +24,7 @@ class Channel {
 	private :
 		std::string _channelName;
 		std::vector <Client > _channel;
-		int limitMbr;
+		int limitMbr; // max member of client can a channel hold
 		std::string key;
 		std::map<int, std::string> _operator;
 		std::string channelTopic;

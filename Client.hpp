@@ -38,7 +38,8 @@ class Client
 		bool		_nick;
 		bool		_user;
 		int			_fd;
-		int			flag;
+		int			_maxChannel;
+		char		clientIp[INET_ADDRSTRLEN];
 	public:
 		bool error;
 		//Orthodox canonical class form
@@ -54,6 +55,8 @@ class Client
 		//----------Setter---------
 		void setFd(int fd);
 		void setPassword(const std::string& pass);
+		void setClientIp(std::string ip);
+		// void setMaxChannel(int max_channels);
 		// void setNickName(std::string nickName);
 		// void setUserName(std::string userName);
 		// void setAuthenticated(bool authenticated);
@@ -61,14 +64,16 @@ class Client
 
 		// //-------------Getter--------------
 		std::string getPassword() const;
+		// void getClientIp(std::string ip);
+		// int	 getMaxChannel() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
 		// bool getAuthenticated() const;
 		// bool getRegisted() const;
 		int getFd() const;
 
-
 		//---------------Commands Utils---------------
+		void sendClients(std::string msg, std::string channel);
 		void sendTo(std::string msg);
 		bool isInvited(std::string channel);
 		//---------------
@@ -85,6 +90,7 @@ class Client
 		void addToExistChannel(int index, std::string channelName);
 		std::vector<std::pair<std::string, std::string> > splitChannels(std::string& channels_Name);
 		std::string removeExtraChar(const std::string& input, char del);
+		void sendMsg(Client &client);
 		//----------------Command---------------
 		void executePass();
 		void executeNick();

@@ -68,9 +68,15 @@ void Client::addToExistChannel(int index, std::string channelName)
 {
 	Server::_channels[index].getChannel().push_back(*this);
 	std::string clients = Server::concatenateClients(Server::_channels[index]);
-	sendRepance(RPL_JOIN(this->_nickName, this->_userName, channelName, Server::_ipaddress));
+	sendRepance(RPL_JOIN(this->_nickName, this->_userName, channelName, this->clientIp));
 	sendRepance(RPL_NAMREPLY(Server::_hostname, clients, "#" + channelName, this->_nickName));
 	sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
+	std::map<int, std::string> opers =  Server::_channels[index].getOperator();
+	for (std::map<int, std::string>::iterator it = opers.begin(); it != opers.end(); it++)
+	{
+		std::string msg = RPL_JOIN(this->_nickName, this->_userName, channelName, this->clientIp);
+		send (it->first, msg.c_str(), msg.length(), 0);
+	}
 }
 
 void Client::executeJoin()
@@ -126,7 +132,7 @@ void Client::executeJoin()
 				else if (index == -1)
 				{
 					addNewChannel(channelName);
-					sendRepance(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, Server::_ipaddress));
+					sendRepance(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp));
 					sendRepance(RPL_NAMREPLY(Server::_hostname, "@" + this->_nickName, "#" + channelName,  this->_nickName));
 					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
 				}

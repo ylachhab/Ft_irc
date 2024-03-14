@@ -23,6 +23,13 @@ t_members splitMembers(std::string& members)
 	return memb;
 }
 
+void Client::sendMsg(Client &client)
+{
+	std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + client.getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
+	send(client.getFd(), msg.c_str(), msg.length(), 0);
+
+}
+
 void Client::executePrivMsg()
 {
 	if (this->_registred)
@@ -41,11 +48,8 @@ void Client::executePrivMsg()
 				std::vector<Client> clients = Server::_channels[index].getChannel();
 				for (size_t j = 0; j < clients.size(); j++)
 				{
-					if (Server::_channels[index].isOperator(clients[j].getNickName()) == -1)
-					{
-						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + Server::_ipaddress + " PRIVMSG " + clients[j].getNickName() + " :" + vec[1] + "\r\n";
-						send(clients[j].getFd(), msg.c_str(), msg.length(), 0);
-					}
+					if (clients[j]._nickName != this->_nickName)
+						sendMsg(clients[j]);
 				}
 			}
 			else
@@ -55,10 +59,7 @@ void Client::executePrivMsg()
 		{
 			int index = Server::retClient(member.vec_clients[i]);
 			if (index != -1)
-			{
-				std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + Server::_ipaddress + " PRIVMSG " + Server::cObjs[index].getNickName() + " :" + vec[1] + "\r\n";
-				send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
-			}
+				sendMsg(Server::cObjs[index]);
 			else
 				sendRepance(Server::_hostname + " 401 " + this->_nickName + " " + member.vec_clients[i] + " :No such nick\r\n");
 		}

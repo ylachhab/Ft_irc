@@ -9,7 +9,6 @@ Client::Client()
 	this->_nick = false;
 	this->_user = false;
 	this->_nickName = "*";
-	this->flag = 0;
 }
 
 Client::Client(const Client& obj)
@@ -36,6 +35,7 @@ Client& Client::operator=(const Client& obj)
 		this->_pass = obj._pass;
 		this->_user = obj._user;
 		this->_nick = obj._nick;
+		std::memcpy(this->clientIp, obj.clientIp, INET_ADDRSTRLEN);
 	}
 	return *this;
 }
@@ -71,6 +71,11 @@ std::string Client::getNickName() const
 void Client::setPassword(const std::string& pass)
 {
 	this->_password = pass;
+}
+
+void Client::setClientIp(const std::string ip)
+{
+	std::memcpy(this->clientIp, ip.c_str(), INET_ADDRSTRLEN);
 }
 
 void Client::setFd(int fd)
