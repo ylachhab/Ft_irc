@@ -80,15 +80,17 @@ class Client
 		void checkOperatorFlag(char sign, int index, std::string channel, std::string arg);
 		void checkKeyFlag(char sign, int index, std::string channel, std::string arg);
 		//---------------
-
 		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);
 		void addToExistChannel(int index, std::string channelName);
+		std::vector<std::pair<std::string, std::string> > splitChannels(std::string& channels_Name);
+		std::string removeExtraChar(const std::string& input, char del);
 		//----------------Command---------------
-		void executePass(std::vector<std::string> &vec);
-		void executeNick(std::vector<std::string> &vec);
-		void executeUser(std::vector<std::string> &vec);
-		void executeJoin(std::vector<std::string> &vec);
+		void executePass();
+		void executeNick();
+		void executeUser();
+		void executeJoin();
+		void executePrivMsg();
 		void Topic();
 		void Mode();
 		void Kick();

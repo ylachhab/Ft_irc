@@ -1,31 +1,30 @@
 #include "Client.hpp"
 
-
-/******************* JOIN Command **********************/
-std::vector<std::pair<std::string, std::string> > splitChannels
-	(std::string& channels_Name, std::string& keys, size_t size)
+/******************* utils **********************/
+std::vector<std::pair<std::string, std::string> > Client::splitChannels
+	(std::string& channels_Name)
 {
-	std::vector<std::pair<std::string, std::string> > vec;
+	std::vector<std::pair<std::string, std::string> > vec_pair;
 	std::stringstream split_channel;
 	std::string channel;
 	split_channel << channels_Name;
-	if (size < 2)
+	if (vec.size() < 2)
 	{
 		while (std::getline(split_channel, channel, ','))
-			vec.push_back(std::make_pair(channel, ""));
+			vec_pair.push_back(std::make_pair(channel, ""));
 	}
 	else
 	{
 		std::stringstream split_keys;
 		std::string key;
-		split_keys << keys;
+		split_keys << vec[1];
 		while (std::getline(split_channel, channel, ',') && std::getline(split_keys, key, ','))
-			vec.push_back(std::make_pair(channel, key));
+			vec_pair.push_back(std::make_pair(channel, key));
 	}
-	return vec;
+	return vec_pair;
 }
 
-std::string removeExtraChar(const std::string& input, char del) {
+std::string Client::removeExtraChar(const std::string& input, char del) {
 	std::string result;
 	bool charFlag = false;
 
@@ -45,6 +44,7 @@ std::string removeExtraChar(const std::string& input, char del) {
 	return result;
 }
 
+/******************* JOIN Command **********************/
 int existChannel(std::string channelName)
 {
 	for (size_t i = 0; i < Server::_channels.size(); i++)
@@ -73,12 +73,12 @@ void Client::addToExistChannel(int index, std::string channelName)
 	sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
 }
 
-void Client::executeJoin(std::vector<std::string> &vec)
+void Client::executeJoin()
 {
-	std::string tmp = removeExtraChar(vec[0], ',');
 	if (this->_registred)
 	{
-		std::vector<std::pair<std::string, std::string> > v = splitChannels(tmp, vec[1], vec.size());
+		std::string tmp = removeExtraChar(vec[0], ',');
+		std::vector<std::pair<std::string, std::string> > v = splitChannels(tmp);
 		for (std::vector<std::pair<std::string, std::string> >::iterator it = v.begin(); it != v.end() ; it++)
 		{
 			if (it->first[0] == '#' && it->first.length() > 1)

@@ -76,7 +76,7 @@ int Server::retChannel(std::string channel) {
 		if (_channels[i].getChannelName() == channel)
 			return i;
 	}
-	return 0;
+	return -1;
 }
 
 int Server::retClient(std::string client) {
@@ -85,7 +85,7 @@ int Server::retClient(std::string client) {
 		if (cObjs[i].getNickName() == client)
 			return i;
 	}
-	return 0;
+	return -1;
 }
 
 int Server::findOperator(std::string channel, std::string nick) {

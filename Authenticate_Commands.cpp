@@ -22,7 +22,7 @@ bool specialCharacter(std::string &str)
 	return false;
 }
 /******************* PASS Commande **********************/
-void Client::executePass(std::vector<std::string> &vec)
+void Client::executePass()
 {
 	if (this->_registred)
 		sendRepance(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
@@ -46,7 +46,7 @@ void Client::executePass(std::vector<std::string> &vec)
 
 
 /******************* NICK Command **********************/
-void Client::executeNick(std::vector<std::string> &vec)
+void Client::executeNick()
 {
 	if (this->_pass && this->_authenticated)
 	{
@@ -76,7 +76,7 @@ void Client::executeNick(std::vector<std::string> &vec)
 }
 
 /******************* USER Command **********************/
-void Client::executeUser(std::vector<std::string> &vec)
+void Client::executeUser()
 {
 	if (this->_registred)
 		sendRepance(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));

@@ -158,21 +158,23 @@ void Client::parceCommand() {
 			continue;
 		}
 		if (to_Upper(cmd) == "PASS")
-			executePass(vec);
+			executePass();
 		else if (to_Upper(cmd) == "NICK")
-			executeNick(vec);
+			executeNick();
 		else if (to_Upper(cmd) == "USER")
-			executeUser(vec);
+			executeUser();
 		else if (to_Upper(cmd) == "JOIN")
-			executeJoin(vec);
+			executeJoin();
 		else if (to_Upper(cmd) == "KICK")
 			Kick();
 		else if (to_Upper(cmd) == "INVITE")
 			Invite();
 		else if (to_Upper(cmd) == "MODE")
 			Mode();
-		else if (cmd == "TOPIC" || cmd == "topic")
+		else if (to_Upper(cmd) == "TOPIC")
 			Topic();
+		else if (to_Upper(cmd) == "PRIVMSG")
+			executePrivMsg();
 		if (tmp.empty())
 		{
 			vec.clear();
