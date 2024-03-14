@@ -8,7 +8,7 @@ bool Client::checkError() {
 		return true ;
 	}
 	std::string str = vec[0];
-	if (str[0] == '#' && str.length() > 2)
+	if (str[0] == '#' && str.length() > 1)
 		vec[0] = vec[0].substr(1);
 	else {
 		sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, str, this->_nickName));

@@ -81,7 +81,7 @@ void Client::executeJoin(std::vector<std::string> &vec)
 		std::vector<std::pair<std::string, std::string> > v = splitChannels(tmp, vec[1], vec.size());
 		for (std::vector<std::pair<std::string, std::string> >::iterator it = v.begin(); it != v.end() ; it++)
 		{
-			if (it->first[0] == '#' && it->first.length() > 2)
+			if (it->first[0] == '#' && it->first.length() > 1)
 			{
 				std::string channelName = it->first.substr(1);
 				int index = existChannel(channelName);
@@ -127,8 +127,8 @@ void Client::executeJoin(std::vector<std::string> &vec)
 				{
 					addNewChannel(channelName);
 					sendRepance(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, Server::_ipaddress));
-					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
 					sendRepance(RPL_NAMREPLY(Server::_hostname, "@" + this->_nickName, "#" + channelName,  this->_nickName));
+					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
 				}
 
 			}
