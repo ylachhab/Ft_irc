@@ -147,12 +147,21 @@ void Client::parceCommand() {
 			else
 			{
 				str = str.substr(index);
-				char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
-				while(split_str != NULL)
+				size_t pos = str.find(":");
+				if(pos != std::string::npos)
 				{
+					char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
 					vec.push_back(split_str);
-					split_str = std::strtok(NULL, " \t");
-				}	
+					vec.push_back(str.substr(pos + 1));
+				}
+				else{
+					char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
+					while(split_str != NULL)
+					{
+						vec.push_back(split_str);
+						split_str = std::strtok(NULL, " \t");
+					}
+				}
 			}
 		}
 		else
