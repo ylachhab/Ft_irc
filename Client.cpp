@@ -61,11 +61,6 @@ std::string Client::getNickName() const
 	return this->_nickName;
 }
 
-// int Client::getFlag()
-// {
-// 	return this->flag;
-// }
-
 //---------------Setter-----------------
 
 void Client::setPassword(const std::string& pass)
@@ -86,11 +81,6 @@ int Client::getFd() const
 {
 	return this->_fd;
 }
-// int Client::getFlag()
-// {
-// 	return this->flag;
-// }
-
 
 /*************Parce && execute Commands*****************/
 

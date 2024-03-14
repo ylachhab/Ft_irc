@@ -50,14 +50,10 @@ void Client::Kick() {
 	}
 	Server::eraseMember(vec[0], vec[1]);
 	if (vec.size() > 3) {
-		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK " + str + " "
-		// 	+ vec[1] + " :" + vec[vec.size() - 1] + "\r\n");
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK "
 			+ str + " " + vec[1] + " :" + vec[vec.size() - 1] + "\r\n", vec[0]);
 	}
 	else {
-		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK " + str
-		// 	+ " " + vec[1] + " :" + vec[1] + "\r\n");
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK "
 			+ str + " " + vec[1] + " :" + vec[1] + "\r\n", vec[0]);
 	}

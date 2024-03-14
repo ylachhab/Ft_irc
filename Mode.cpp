@@ -4,7 +4,6 @@ bool Client::checkError() {
 	if (!this->_authenticated || !this->_registred)
 	{
 		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
-		// std::cout << " :Register first." << std::endl;
 		return true ;
 	}
 	std::string str = vec[0];
@@ -12,17 +11,14 @@ bool Client::checkError() {
 		vec[0] = vec[0].substr(1);
 	else {
 		sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, str, this->_nickName));
-		// sendTo(this->_nickName + " " + vec[0] + " :No such channel" + "\r\n");
 		return true;
 	}
 	if (!Server::findChannel(vec[0])) {
 		sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, str, this->_nickName));
-		// sendTo(this->_nickName + " " + str + " :No such channel" + "\r\n");
 		return true;
 	}
 	if (Server::findOperator(vec[0], this->_nickName) != this->_fd) {
 		sendTo(ERR_NOTOP(Server::_hostname, str));
-		// sendTo(this->_nickName + " " + str + " :You're not channel operator" + "\r\n");
 		return true;
 	}
 	return false;
@@ -92,14 +88,12 @@ void Client::checkInvite(char sign, int index, std::string channel) {
 	if (!Server::_channels[index]._channelMode._inviteOnly && sign == '+')
 	{
 		Server::_channels[index]._channelMode._inviteOnly = true;
-		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +i" + "\r\n");
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
 			+ channel + " +i" + "\r\n", channel.substr(1));
 	}
 	if (Server::_channels[index]._channelMode._inviteOnly && sign == '-')
 	{
 		Server::_channels[index]._channelMode._inviteOnly = false;
-		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -i" + "\r\n");
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
 			+ channel + " -i" + "\r\n", channel.substr(1));
 	}
@@ -112,13 +106,11 @@ void Client::checkOperatorFlag(char sign, int index, std::string channel, std::s
 		sendTo(ERR_USERNOTINCHANNEL(Server::_hostname, vec[0]));
 	else if (Server::findOperator(vec[0], arg) == -1 && sign == '+') {
 		Server::_channels[index].setOperator(Server::retFd(arg), arg);
-		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +o " + arg + "\r\n");
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
 			+ channel + " +o " + arg + "\r\n", channel.substr(1));
 	}
 	else if (Server::findOperator(vec[0], arg) != -1 && sign == '-') {
 		Server::_channels[index].eraseOperator(Server::retFd(arg));
-		// sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -o " + arg + "\r\n");
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
 			+ channel + " -o " + arg + "\r\n", channel.substr(1));
 	}

@@ -56,20 +56,10 @@ class Client
 		void setFd(int fd);
 		void setPassword(const std::string& pass);
 		void setClientIp(std::string ip);
-		// void setMaxChannel(int max_channels);
-		// void setNickName(std::string nickName);
-		// void setUserName(std::string userName);
-		// void setAuthenticated(bool authenticated);
-		// void setRegisted(bool registed);
-
-		// //-------------Getter--------------
+		//-------------Getter--------------
 		std::string getPassword() const;
-		// void getClientIp(std::string ip);
-		// int	 getMaxChannel() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
-		// bool getAuthenticated() const;
-		// bool getRegisted() const;
 		int getFd() const;
 
 		//---------------Commands Utils---------------
