@@ -89,7 +89,6 @@ void Client::Invite() {
 		return ;
 	}
 	std::string str = vec[1];
-	std::cout << str[1] << std::endl;
 	if (str[0] == '#' && str.length() > 1)
 		vec[1] = vec[1].substr(1);
 	else {
@@ -114,7 +113,6 @@ void Client::Invite() {
 		int i = Server::retClient(vec[0]);
 		Server::cObjs[i].channelInvite.push_back(vec[1]);
 	}
-	std::cout << isInvited(vec[1]) << std::endl;
 	sendTo(":" + Server::_hostname + " 341 " + this->_nickName + " " + vec[0] + " " + vec[1]+ "\r\n");
 	sendClient(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " INVITE "
 		+ vec[0] + " " + str + "\r\n", Server::retFd(vec[0]));

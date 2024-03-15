@@ -26,9 +26,7 @@ Client& Client::operator=(const Client& obj)
 		this->_authenticated = obj._authenticated;
 		this->_registred = obj._registred;
 		this->_userName = obj._userName;
-		this->_realName = obj._realName;
 		this->_fd = obj._fd;
-		// this->_hostName = obj._hostName;
 		this->_nickName = obj._nickName;
 		this->_password = obj._password;
 		this->_port = obj._port;
@@ -61,10 +59,6 @@ std::string Client::getNickName() const
 	return this->_nickName;
 }
 
-// int Client::getFlag()
-// {
-// 	return this->flag;
-// }
 
 //---------------Setter-----------------
 
@@ -86,15 +80,10 @@ int Client::getFd() const
 {
 	return this->_fd;
 }
-// int Client::getFlag()
-// {
-// 	return this->flag;
-// }
-
 
 /*************Parce && execute Commands*****************/
 
-std::string to_Upper(std::string str)
+std::string Client::to_Upper(std::string str)
 {
 	for (size_t i = 0; i < str.size(); i++)
 		str[i] = toupper(str[i]);
@@ -147,19 +136,20 @@ void Client::parceCommand() {
 			else
 			{
 				str = str.substr(index);
-				size_t pos = str.find(":");
-				if(pos != std::string::npos)
+				std::string strTmp = str;
+				char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
+				while(split_str != NULL)
 				{
-					char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
 					vec.push_back(split_str);
-					vec.push_back(str.substr(pos + 1));
-				}
-				else{
-					char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
-					while(split_str != NULL)
+					split_str = std::strtok(NULL, " \t");
+					strTmp = strTmp.substr(vec.back().size());
+					size_t j = strTmp.find_first_not_of(" \t");
+					if (j != std::string::npos)
+						strTmp = strTmp.substr(j);
+					if (split_str && split_str[0] == ':')
 					{
-						vec.push_back(split_str);
-						split_str = std::strtok(NULL, " \t");
+						vec.push_back(strTmp.substr(1));
+						break;
 					}
 				}
 			}
@@ -189,6 +179,8 @@ void Client::parceCommand() {
 			Topic();
 		else if (to_Upper(cmd) == "PRIVMSG")
 			executePrivMsg();
+		else if (to_Upper(cmd) == "NOTICE")
+			executeNotice();
 		if (tmp.empty())
 		{
 			vec.clear();

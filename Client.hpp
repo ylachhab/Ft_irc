@@ -28,8 +28,6 @@ class Client
 		std::vector <std::string > channelInvite;
 		std::string	_nickName;
 		std::string	_userName;
-		std::string	_realName;
-		// std::string	_hostName;
 		std::string	_password;
 		std::string _port;
 		bool		_authenticated;
@@ -51,25 +49,17 @@ class Client
 		//Parce and execute Command
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
+		std::string to_Upper(std::string str);
 
 		//----------Setter---------
 		void setFd(int fd);
 		void setPassword(const std::string& pass);
 		void setClientIp(std::string ip);
-		// void setMaxChannel(int max_channels);
-		// void setNickName(std::string nickName);
-		// void setUserName(std::string userName);
-		// void setAuthenticated(bool authenticated);
-		// void setRegisted(bool registed);
 
 		// //-------------Getter--------------
 		std::string getPassword() const;
-		// void getClientIp(std::string ip);
-		// int	 getMaxChannel() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
-		// bool getAuthenticated() const;
-		// bool getRegisted() const;
 		int getFd() const;
 
 		//---------------Commands Utils---------------
@@ -90,13 +80,15 @@ class Client
 		void addToExistChannel(int index, std::string channelName);
 		std::vector<std::pair<std::string, std::string> > splitChannels(std::string& channels_Name);
 		std::string removeExtraChar(const std::string& input, char del);
-		void sendMsg(Client &client);
+		int existChannel(std::string channelName);
 		//----------------Command---------------
 		void executePass();
 		void executeNick();
 		void executeUser();
 		void executeJoin();
 		void executePrivMsg();
+		void executeNotice();
+		void executeQuit();
 		void Topic();
 		void Mode();
 		void Kick();

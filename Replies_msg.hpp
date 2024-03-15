@@ -47,6 +47,8 @@
 #define ERR_NOSUCHCHANNEL(hostname, channel, nick) ":" + hostname + " 403 " + nick + " " + channel + " :No such channel\r\n"
 #define ERR_NOSUCHNICK(hostname, channel, argument) ":" + hostname + " 401 " + channel + " " + argument + " :No such nick/channel\r\n"
 #define ERR_USERONCHANNEL(hostname, channel, nick) ":" + hostname + " 443 " + nick + " " + channel + "  :is already on channel\r\n"
+#define ERR_NOTEXTTOSEND(hostname, nick) ":" + hostname + " 412 " + nick + " :No text to send\r\n"
+#define ERR_CANNOTSENDTOCHAN(hostname, channel, nick) ":" + hostname + " 404 " + nick + " " + channel + " :Cannot send to channel\r\n"
 
 #define ERR_INPUTTOOLONG(nick, hostname) ":" + hostname + " 417 " + nick + " :Input line was too long !\r\n"
 

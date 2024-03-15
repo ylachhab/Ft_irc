@@ -85,7 +85,6 @@ void Client::executeUser()
 		if (vec.size() >= 4)
 		{
 			this->_userName = vec[0];
-			this->_realName = vec[3];
 			this->_user = true;
 			this->_registred = true;
 			sendRepance(RPL_WELCOME(this->_nickName, Server::_hostname));

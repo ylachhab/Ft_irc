@@ -122,12 +122,21 @@ int isNumber(std::string str)
 std::string Server::concatenateClients(Channel &vec)
 {
 	std::string conStr;
+	std::vector<std::string> tmp_vec;
 
 	for (size_t i = 0; i < vec.getChannel().size(); i++)
 	{
 		if (vec.isOperator(vec.getChannel()[i].getNickName()) != -1)
-			conStr += "@";
+		{
+			tmp_vec.push_back("@" + vec.getChannel()[i].getNickName());
+			continue;
+		}
 		conStr += vec.getChannel()[i].getNickName();
+		conStr += " ";
+	}
+	for (size_t i = 0; i < tmp_vec.size(); i++)
+	{
+		conStr += tmp_vec[i];
 		conStr += " ";
 	}
 	return conStr;
@@ -168,7 +177,7 @@ int Server::get_socket() {
 	freeaddrinfo(ai);
 	if (p == NULL)
 		return -1;
-	if (listen(socfd, 10) == -1)
+	if (listen(socfd, INT_MAX) == -1)
 		return -1;
 	return socfd;
 }
