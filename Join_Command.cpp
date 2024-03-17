@@ -18,8 +18,14 @@ std::vector<std::pair<std::string, std::string> > Client::splitChannels
 		std::stringstream split_keys;
 		std::string key;
 		split_keys << vec[1];
-		while (std::getline(split_channel, channel, ',') && std::getline(split_keys, key, ','))
-			vec_pair.push_back(std::make_pair(channel, key));
+		while (std::getline(split_channel, channel, ','))
+		{
+			if(std::getline(split_keys, key, ','))
+				vec_pair.push_back(std::make_pair(channel, key));
+			else
+				vec_pair.push_back(std::make_pair(channel, ""));
+
+		}
 	}
 	return vec_pair;
 }
@@ -74,8 +80,8 @@ void Client::addToExistChannel(int index, std::string channelName)
 	std::map<int, std::string> opers =  Server::_channels[index].getOperator();
 	for (std::map<int, std::string>::iterator it = opers.begin(); it != opers.end(); it++)
 	{
-		std::string msg = RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp);
-		send (it->first, msg.c_str(), msg.length(), 0);
+			std::string msg = RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp);
+			send (it->first, msg.c_str(), msg.length(), 0);
 	}
 }
 
@@ -91,7 +97,10 @@ void Client::executeJoin()
 			{
 				std::string channelName = it->first.substr(1);
 				int index = existChannel(to_Upper(channelName));
+				std::cout << "index: " << index << "\n";
 				if (index != -1)
+					std::cout << "member: " << Server::isMember(Server::_channels[index].getChannelName(), this->getNickName()) << "\n";
+				if (index != -1 && !Server::isMember(Server::_channels[index].getChannelName(), this->getNickName()))
 				{
 					if (Server::_channels[index]._channelMode._inviteOnly)
 					{
@@ -126,7 +135,7 @@ void Client::executeJoin()
 						else
 							sendRepance(ERR_BADCHANNELKEY(this->_nickName, Server::_hostname, it->first));
 					}
-					else if (Server::_channels[index]._channelMode.IKLoff() && !Server::isMember(Server::_channels[index].getChannelName(), this->getNickName()))
+					else if (Server::_channels[index]._channelMode.IKLoff())
 						addToExistChannel(index, channelName);
 				}
 				else if (index == -1)
@@ -136,7 +145,6 @@ void Client::executeJoin()
 					sendRepance(RPL_NAMREPLY(Server::_hostname, "@" + this->_nickName, "#" + channelName,  this->_nickName));
 					sendRepance(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
 				}
-
 			}
 			else
 				sendRepance(ERR_NOSUCHCHANNEL(Server::_hostname, it->first, this->_nickName));

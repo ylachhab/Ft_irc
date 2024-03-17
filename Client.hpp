@@ -29,6 +29,7 @@ class Client
 		std::string	_nickName;
 		std::string	_userName;
 		std::string	_password;
+		std::string	tmp_nick;
 		std::string _port;
 		bool		_authenticated;
 		bool		_registred;
@@ -88,7 +89,7 @@ class Client
 		void executeJoin();
 		void executePrivMsg();
 		void executeNotice();
-		void executeQuit();
+		// void executeQuit();
 		void Topic();
 		void Mode();
 		void Kick();

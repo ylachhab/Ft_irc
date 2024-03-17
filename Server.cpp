@@ -262,6 +262,11 @@ Server::Server(std::string port, std::string password) {
 					}
 					if (cObjs[i - 1].error)
 					{
+						for (size_t j = 0; j < Server::_channels.size(); j++)
+						{
+							Server::_channels[j].eraseMember(cObjs[i - 1].getNickName());
+							Server::_channels[j].eraseOperator(cObjs[i - 1].getFd());
+						}
 						pfds.erase(pfds.begin() + i);
 						cObjs.erase(cObjs.begin() + (i - 1));
 					}

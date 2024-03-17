@@ -63,7 +63,7 @@ void Client::executeNick()
 			if (specialCharacter(vec[0]) == 0)
 			{
 				this->_nick = true;
-				this->_nickName = vec[0];
+				this->tmp_nick = vec[0];
 			}
 			else
 				sendRepance(ERR_ERRONEUSNICKNAME(this->_nickName, Server::_hostname));
@@ -84,6 +84,15 @@ void Client::executeUser()
 	{
 		if (vec.size() >= 4)
 		{
+			for (size_t i = 0; i < Server::cObjs.size(); i++)
+			{
+				if (Server::cObjs[i]._nickName == this->tmp_nick)
+				{
+					sendRepance("ERROR :Closing Link: ss by tngnet.nl.quakenet.org (Overridden by other sign on)");
+					exit(1);
+				}
+			}
+			this->_nickName = this->tmp_nick;
 			this->_userName = vec[0];
 			this->_user = true;
 			this->_registred = true;
@@ -98,3 +107,11 @@ void Client::executeUser()
 	else
 		sendRepance(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }
+
+
+// void Client::executeQuit()
+// {
+// 	int fd = this->_fd;
+// 	Server::cObjs.erase(Server::retClient(this->_nickName) + Server::)
+// 	close(this->_fd);
+// }
