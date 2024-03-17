@@ -128,7 +128,7 @@ int Server::get_socket() {
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
-	if ((rv = getaddrinfo(NULL, this->port.c_str(), &hints, &ai)))
+	if (rv = getaddrinfo(NULL, this->port.c_str(), &hints, &ai))
 	{
 		std::cout << gai_strerror(rv) << std::endl;
 		std::exit(1);
@@ -153,7 +153,7 @@ int Server::get_socket() {
 	freeaddrinfo(ai);
 	if (p == NULL)
 		return -1;
-	if (listen(socfd, 10) == -1)
+	if (listen(socfd, INT_MAX) == -1)
 		return -1;
 	return socfd;
 }
@@ -191,7 +191,6 @@ Server::Server(std::string port, std::string password) {
 	socklen_t addLen;
 	struct sockaddr_storage cAddr;
 	int newFd;
-	char remoteIP[INET6_ADDRSTRLEN];
 	bool flag;
 	while (1) {
 		int pcount = poll(pfds.data(), pfds.size(), -1);
@@ -221,12 +220,9 @@ Server::Server(std::string port, std::string password) {
 						addToPfds(newFd);
 						cObj.setPassword(this->password);
 						cObj.setClientIp(ipStr);
-						std::cout << ipStr << std::endl;
 						cObj.setFd(newFd);
 						cObjs.push_back(cObj);
-						std::cout << "pollserver: new connection from " << inet_ntop(cAddr.ss_family, 
-							getAddr((struct sockaddr*)&cAddr), remoteIP, INET6_ADDRSTRLEN)
-							<< " on socket " << newFd << std::endl;
+						std::cout << "pollserver: new connection from " << ipStr << " on socket " << newFd << std::endl;
 					}
 				}
 				else {

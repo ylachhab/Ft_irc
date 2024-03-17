@@ -188,7 +188,7 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 			std::cout << "pollserver: socket " << clientFd <<" hung up\n";
 		else {
 			std::cout << "Error in recv\n";
-			std::exit(1);
+			// std::exit(1);
 		}
 		close(pfd.fd);
 		error = true;
