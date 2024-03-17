@@ -128,7 +128,7 @@ int Server::get_socket() {
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
-	if (rv = getaddrinfo(NULL, this->port.c_str(), &hints, &ai))
+	if ((rv = getaddrinfo(NULL, this->port.c_str(), &hints, &ai)))
 	{
 		std::cout << gai_strerror(rv) << std::endl;
 		std::exit(1);
