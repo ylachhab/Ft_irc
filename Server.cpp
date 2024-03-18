@@ -1,6 +1,7 @@
 #include "Server.hpp"
 
 std::vector <Client > Server::cObjs;
+std::vector <pollfd > Server::pfds;
 std::vector <Channel > Server::_channels;
 std::string Server::_hostname = "FT_IRC.1337.ma";
 

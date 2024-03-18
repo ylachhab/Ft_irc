@@ -82,6 +82,8 @@ class Client
 		std::vector<std::pair<std::string, std::string> > splitChannels(std::string& channels_Name);
 		std::string removeExtraChar(const std::string& input, char del);
 		int existChannel(std::string channelName);
+		void nicknameSet(bool flag);
+		void isRegesterd();
 		//----------------Command---------------
 		void executePass();
 		void executeNick();
@@ -89,7 +91,7 @@ class Client
 		void executeJoin();
 		void executePrivMsg();
 		void executeNotice();
-		// void executeQuit();
+		void executeQuit();
 		void Topic();
 		void Mode();
 		void Kick();

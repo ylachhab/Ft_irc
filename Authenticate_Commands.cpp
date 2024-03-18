@@ -21,6 +21,35 @@ bool specialCharacter(std::string &str)
 	}
 	return false;
 }
+
+void Client::nicknameSet(bool flag)
+{
+	if (flag)
+	{
+		for (size_t i = 0; i < Server::cObjs.size(); i++)
+		{
+			if (Server::cObjs[i].getFd() != this->_fd
+				&& Server::cObjs[i]._nickName == this->_nickName && !Server::cObjs[i]._registred)
+			{
+				std::string msg = "ERROR :Closing Link: ss by tngnet.nl.quakenet.org (Overridden by other sign on)";
+				send(Server::cObjs[i].getFd(), msg.c_str(), msg.length(), 0);
+				close(Server::cObjs[i].getFd());
+			}
+		}
+	}
+}
+
+void Client::isRegesterd()
+{
+	if (this->_nick && this->_user && !this->_registred)
+	{
+		this->_registred = true;
+		sendRepance(RPL_WELCOME(this->_nickName, Server::_hostname));
+		sendRepance(RPL_YOURHOST(this->_nickName, Server::_hostname));
+		sendRepance(RPL_CREATED(this->_nickName, Server::_hostname));
+		sendRepance(RPL_MYINFO(this->_nickName, Server::_hostname));
+	}
+}
 /******************* PASS Commande **********************/
 void Client::executePass()
 {
@@ -50,9 +79,11 @@ void Client::executeNick()
 {
 	if (this->_pass && this->_authenticated)
 	{
+		nicknameSet(this->_user);
 		for (size_t i = 0; i < Server::cObjs.size(); i++)
 		{
-			if (Server::cObjs[i]._nickName == vec[0])
+			if (Server::cObjs[i].getFd() != this->_fd
+				&& Server::cObjs[i]._nickName == vec[0] && Server::cObjs[i]._registred)
 			{
 				sendRepance(ERR_NICKNAMEINUSE(this->_nickName, Server::_hostname));
 				return ;
@@ -63,7 +94,8 @@ void Client::executeNick()
 			if (specialCharacter(vec[0]) == 0)
 			{
 				this->_nick = true;
-				this->tmp_nick = vec[0];
+				this->_nickName = vec[0];
+				isRegesterd();
 			}
 			else
 				sendRepance(ERR_ERRONEUSNICKNAME(this->_nickName, Server::_hostname));
@@ -80,26 +112,14 @@ void Client::executeUser()
 {
 	if (this->_registred)
 		sendRepance(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
-	if (this->_pass && this->_nick && this->_authenticated)
+	if (this->_pass && this->_authenticated)
 	{
 		if (vec.size() >= 4)
 		{
-			for (size_t i = 0; i < Server::cObjs.size(); i++)
-			{
-				if (Server::cObjs[i]._nickName == this->tmp_nick)
-				{
-					sendRepance("ERROR :Closing Link: ss by tngnet.nl.quakenet.org (Overridden by other sign on)");
-					exit(1);
-				}
-			}
-			this->_nickName = this->tmp_nick;
+			nicknameSet(this->_nick);
 			this->_userName = vec[0];
 			this->_user = true;
-			this->_registred = true;
-			sendRepance(RPL_WELCOME(this->_nickName, Server::_hostname));
-			sendRepance(RPL_YOURHOST(this->_nickName, Server::_hostname));
-			sendRepance(RPL_CREATED(this->_nickName, Server::_hostname));
-			sendRepance(RPL_MYINFO(this->_nickName, Server::_hostname));
+			isRegesterd();
 		}
 		else
 			sendRepance(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
@@ -109,9 +129,15 @@ void Client::executeUser()
 }
 
 
-// void Client::executeQuit()
-// {
-// 	int fd = this->_fd;
-// 	Server::cObjs.erase(Server::retClient(this->_nickName) + Server::)
-// 	close(this->_fd);
-// }
+void Client::executeQuit()
+{
+	close(this->_fd);
+	for (size_t j = 0; j < Server::_channels.size(); j++)
+	{
+		Server::_channels[j].eraseMember(this->_nickName);
+		Server::_channels[j].eraseOperator(this->_fd);
+	}
+	int i = Server::retClient(this->_nickName);
+	Server::cObjs.erase(Server::cObjs.begin() + i);
+	Server::pfds.erase(Server::pfds.begin() + i + 1);
+}

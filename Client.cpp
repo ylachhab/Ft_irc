@@ -181,8 +181,10 @@ void Client::parceCommand() {
 			executePrivMsg();
 		else if (to_Upper(cmd) == "NOTICE")
 			executeNotice();
-		// else if (to_Upper(cmd) == "QUIT")
-		// 	executeQuit();
+		else if (to_Upper(cmd) == "QUIT")
+			executeQuit();
+		else
+			std::cout << "error\n";
 		if (tmp.empty())
 		{
 			vec.clear();

@@ -97,9 +97,6 @@ void Client::executeJoin()
 			{
 				std::string channelName = it->first.substr(1);
 				int index = existChannel(to_Upper(channelName));
-				std::cout << "index: " << index << "\n";
-				if (index != -1)
-					std::cout << "member: " << Server::isMember(Server::_channels[index].getChannelName(), this->getNickName()) << "\n";
 				if (index != -1 && !Server::isMember(Server::_channels[index].getChannelName(), this->getNickName()))
 				{
 					if (Server::_channels[index]._channelMode._inviteOnly)

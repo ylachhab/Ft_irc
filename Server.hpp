@@ -25,8 +25,8 @@ class Server
 	private:
 		std::string port;
 		std::string password;
-		std::vector <pollfd > pfds;
 	public:
+		static std::vector <pollfd > pfds;
 		static std::vector <Client> cObjs;
 		static std::vector <Channel > _channels;
 		static std::string _hostname;
