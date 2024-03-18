@@ -118,6 +118,7 @@ void Client::executeUser()
 		{
 			nicknameSet(this->_nick);
 			this->_userName = vec[0];
+			this->_realName = vec[3];
 			this->_user = true;
 			isRegesterd();
 		}

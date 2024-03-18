@@ -1,7 +1,7 @@
 #include "Server.hpp"
 
-std::vector <Client > Server::cObjs;
 std::vector <pollfd > Server::pfds;
+std::vector <Client > Server::cObjs;
 std::vector <Channel > Server::_channels;
 std::string Server::_hostname = "FT_IRC.1337.ma";
 
@@ -199,7 +199,6 @@ void Server::deletePfds(int i){
 }
 
 Server::Server(std::string port, std::string password) {
-
 	if (isNumber(port) || port.empty())
 	{
 		std::cout << "Error in port" << std::endl;

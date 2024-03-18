@@ -28,8 +28,8 @@ class Client
 		std::vector <std::string > channelInvite;
 		std::string	_nickName;
 		std::string	_userName;
+		std::string	_realName;
 		std::string	_password;
-		std::string	tmp_nick;
 		std::string _port;
 		bool		_authenticated;
 		bool		_registred;
@@ -37,7 +37,6 @@ class Client
 		bool		_nick;
 		bool		_user;
 		int			_fd;
-		int			_maxChannel;
 		char		clientIp[INET_ADDRSTRLEN];
 	public:
 		bool error;
@@ -61,8 +60,8 @@ class Client
 		std::string getPassword() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
+		std::string getRealName() const;
 		int getFd() const;
-
 		//---------------Commands Utils---------------
 		void sendClients(std::string msg, std::string channel);
 		void sendTo(std::string msg);
@@ -84,6 +83,8 @@ class Client
 		int existChannel(std::string channelName);
 		void nicknameSet(bool flag);
 		void isRegesterd();
+		void executeBotClient(Client &client);
+		void executeBotChannel();
 		//----------------Command---------------
 		void executePass();
 		void executeNick();
@@ -92,6 +93,8 @@ class Client
 		void executePrivMsg();
 		void executeNotice();
 		void executeQuit();
+		void executeSetAsBot();
+		void executeBot();
 		void Topic();
 		void Mode();
 		void Kick();

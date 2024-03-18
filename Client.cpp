@@ -26,6 +26,7 @@ Client& Client::operator=(const Client& obj)
 		this->_authenticated = obj._authenticated;
 		this->_registred = obj._registred;
 		this->_userName = obj._userName;
+		this->_realName = obj._realName;
 		this->_fd = obj._fd;
 		this->_nickName = obj._nickName;
 		this->_password = obj._password;
@@ -57,6 +58,11 @@ std::string Client::getUserName() const
 std::string Client::getNickName() const
 {
 	return this->_nickName;
+}
+
+std::string Client::getRealName() const
+{
+	return this->_realName;
 }
 
 
@@ -183,8 +189,8 @@ void Client::parceCommand() {
 			executeNotice();
 		else if (to_Upper(cmd) == "QUIT")
 			executeQuit();
-		else
-			std::cout << "error\n";
+		else if (to_Upper(cmd) == "BOT")
+			executeBot();
 		if (tmp.empty())
 		{
 			vec.clear();

@@ -9,6 +9,12 @@ void Client::sendClients(std::string msg, std::string channel) {
 	{
 		if (Server::isMember(channel, Server::cObjs[i].getNickName()))
 			send(Server::cObjs[i].getFd(), msg.c_str(), msg.length(), 0);
+		if(channel == "" && Server::cObjs[i].getNickName() != this->_nickName && Server::cObjs[i]._registred)
+		{
+			std::string toSend =":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " 
+				+ Server::cObjs[i].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
+			send(Server::cObjs[i].getFd(), toSend.c_str(), toSend.length(), 0);
+		}
 	}
 }
 
