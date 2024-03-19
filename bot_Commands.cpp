@@ -18,28 +18,28 @@ std::vector<std::string> splitMsg(std::string str)
 void Client::executeBotClient(Client &client)
 {
 	int c = 0;
-	sendRepance(std::string(BLUE) + "User informations : " + std::string(RESET) + "\r\n");
-	sendRepance(std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
-	sendRepance(std::string(BLUE) + "Nickname : " + std::string(RESET) + "" + client.getNickName() + "\r\n");
-	sendRepance(std::string(BLUE) + "Username : " + std::string(RESET) + "" + client.getUserName() + "\r\n");
-	sendRepance(std::string(BLUE) + "realName : " + std::string(RESET) + "" + client.getRealName() + "\r\n");
-	sendRepance(std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
-	sendRepance(std::string(CYAN)+ "Channels : " + std::string(RESET) + "\r\n");
-	sendRepance(std::string(CYAN)+ "----------------------------" + std::string(RESET) + "\r\n");
+	sendTo(std::string(BLUE) + "User informations : " + std::string(RESET) + "\r\n");
+	sendTo(std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
+	sendTo(std::string(BLUE) + "Nickname : " + std::string(RESET) + "" + client.getNickName() + "\r\n");
+	sendTo(std::string(BLUE) + "Username : " + std::string(RESET) + "" + client.getUserName() + "\r\n");
+	sendTo(std::string(BLUE) + "realName : " + std::string(RESET) + "" + client.getRealName() + "\r\n");
+	sendTo(std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
+	sendTo(std::string(CYAN)+ "Channels : " + std::string(RESET) + "\r\n");
+	sendTo(std::string(CYAN)+ "----------------------------" + std::string(RESET) + "\r\n");
 	for (size_t i = 0; i < Server::_channels.size(); i++)
 	{
 		if (Server::_channels[i].isAMember(client.getNickName()))
 		{
-			sendRepance(std::string(CYAN)+ "-> " + Server::_channels[i].getChannelName() + "" + std::string(RESET) + "");
+			sendTo(std::string(CYAN)+ "-> " + Server::_channels[i].getChannelName() + "" + std::string(RESET) + "");
 			if (Server::_channels[i].isOperator(client.getNickName()) != -1)
-				sendRepance(std::string(CYAN)+ " *" + std::string(RESET) + "");
-			sendRepance("\r\n");
+				sendTo(std::string(CYAN)+ " *" + std::string(RESET) + "");
+			sendTo("\r\n");
 			c++;
 		}
 	}
 	if (c == 0)
-		sendRepance(std::string(RED)+ "-> there is no channel!!" + std::string(RESET) + "\r\n");
-	sendRepance (std::string(CYAN)+ "----------------------------" + std::string(RESET) + "\r\n");
+		sendTo(std::string(RED)+ "-> there is no channel!!" + std::string(RESET) + "\r\n");
+	sendTo (std::string(CYAN)+ "----------------------------" + std::string(RESET) + "\r\n");
 }
 
 void Client::executeBotChannel()
@@ -55,35 +55,35 @@ void Client::executeBotChannel()
 			{
 				if (Server::_channels[index].isAMember(this->_nickName))
 				{
-					sendRepance (std::string(BLUE) + "Channel informations of " + tmpVec[i] + "" + std::string(RESET) + "\r\n");
-					sendRepance (std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
-					sendRepance(std::string(BLUE) + "channel name : " + std::string(RESET) + "" + Server::_channels[index].getChannelName() + "\r\n");
-					sendRepance(std::string(BLUE) + "channel topic : " + std::string(RESET) + "");
+					sendTo (std::string(BLUE) + "Channel informations of " + tmpVec[i] + "" + std::string(RESET) + "\r\n");
+					sendTo (std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
+					sendTo(std::string(BLUE) + "channel name : " + std::string(RESET) + "" + Server::_channels[index].getChannelName() + "\r\n");
+					sendTo(std::string(BLUE) + "channel topic : " + std::string(RESET) + "");
 					if(Server::_channels[index].getChannelTopic().empty())
-						sendRepance(std::string(RED)+ "the Topic not set!" + std::string(RESET) + "\r\n");
+						sendTo(std::string(RED)+ "the Topic not set!" + std::string(RESET) + "\r\n");
 					else
-						sendRepance(Server::_channels[index].getChannelTopic() + "\r\n");
+						sendTo(Server::_channels[index].getChannelTopic() + "\r\n");
 					if (Server::_channels[index]._channelMode._limit)
-						sendRepance(std::string(BLUE) + "Channel limit is : " + std::string(RESET) + "" + std::to_string(Server::_channels[index].getlimitMbr()) + "\r\n");
+						sendTo(std::string(BLUE) + "Channel limit is : " + std::string(RESET) + "" + std::to_string(Server::_channels[index].getlimitMbr()) + "\r\n");
 					std::vector<Client> vec_clients = Server::_channels[index].getChannel();
-					sendRepance(std::string(BLUE) + "Channel Members : " + std::string(RESET) + "\r\n");
+					sendTo(std::string(BLUE) + "Channel Members : " + std::string(RESET) + "\r\n");
 					for (size_t i = 0; i < vec_clients.size(); i++)
 					{
-						sendRepance(std::string(BLUE) + "- " + vec_clients[i].getNickName() + "" + std::string(RESET) + "");
+						sendTo(std::string(BLUE) + "- " + vec_clients[i].getNickName() + "" + std::string(RESET) + "");
 						if (vec_clients[i].getNickName() == this->_nickName)
-							sendRepance(std::string(RED) + "(Me)" + std::string(RESET) + "");
-						sendRepance("\r\n");
+							sendTo(std::string(RED) + "(Me)" + std::string(RESET) + "");
+						sendTo("\r\n");
 					}
-					sendRepance (std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
+					sendTo (std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
 				}
 				else
-					sendRepance(ERR_USERNOTINCHANNEL(Server::_hostname, Server::_channels[index].getChannelName()));
+					sendTo(ERR_USERNOTINCHANNEL(Server::_hostname, Server::_channels[index].getChannelName()));
 			}
 			else
-				sendRepance(ERR_NOSUCHCHANNEL(Server::_hostname, tmpVec[i], this->_nickName));
+				sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, tmpVec[i], this->_nickName));
 		}
 		else
-			sendRepance(ERR_NOSUCHCHANNEL(Server::_hostname, tmpVec[i], this->_nickName));
+			sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, tmpVec[i], this->_nickName));
 	}
 }
 
@@ -103,11 +103,14 @@ void Client::executeBot()
 			else
 			{
 				if (vec[vec.size() - 1].empty())
-					sendRepance(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+					sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 				else
 					sendClients(vec[vec.size() - 1] + "\r\n", "");
 			}
 		}
-
+		else
+			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
 	}
+	else
+		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }

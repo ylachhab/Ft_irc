@@ -129,10 +129,8 @@ void Client::parceCommand() {
 		}
 		else
 		{
-			std::cout << "Error this is not command" << std::endl;
-			if (tmp.empty())
-				break;
-			continue;
+			cmd = str;
+			str = str.substr(str.size());
 		}
 		index = str.find_first_not_of(" \t");
 		if (index != std::string::npos)
@@ -160,13 +158,6 @@ void Client::parceCommand() {
 				}
 			}
 		}
-		else
-		{
-			std::cout << "Error this is not command++" << std::endl;
-			if (tmp.empty())
-				break;
-			continue;
-		}
 		if (to_Upper(cmd) == "PASS")
 			executePass();
 		else if (to_Upper(cmd) == "NICK")
@@ -191,6 +182,10 @@ void Client::parceCommand() {
 			executeQuit();
 		else if (to_Upper(cmd) == "BOT")
 			executeBot();
+		else if (to_Upper(cmd) == "PONG")
+			continue;
+		else
+			sendTo(ERR_UNKNOWNCOMMAND(this->_nickName, Server::_hostname, cmd));
 		if (tmp.empty())
 		{
 			vec.clear();

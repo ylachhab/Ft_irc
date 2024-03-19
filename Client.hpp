@@ -75,7 +75,6 @@ class Client
 		void checkOperatorFlag(char sign, int index, std::string channel, std::string arg);
 		void checkKeyFlag(char sign, int index, std::string channel, std::string arg);
 		//---------------
-		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);
 		void addToExistChannel(int index, std::string channelName);
 		std::vector<std::pair<std::string, std::string> > splitChannels(std::string& channels_Name);

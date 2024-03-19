@@ -28,12 +28,17 @@ void Client::executePrivMsg()
 {
 	if (this->_registred)
 	{
+		if (!vec.size())
+		{
+			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+			return;
+		}
 		std::string tmp = removeExtraChar(vec[0], ',');
 		t_members member = splitMembers(tmp);
 		std::string str;
 		if (vec.size() < 2)
 		{
-			sendRepance(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+			sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 			return;
 		}
 		for (size_t i = 0; i < member.vec_channels.size(); i++)
@@ -41,7 +46,7 @@ void Client::executePrivMsg()
 			str = member.vec_channels[i].substr(1);
 			if (str.size() < 1)
 			{
-				sendRepance(ERR_NOSUCHCHANNEL(Server::_hostname, member.vec_channels[i], this->_nickName));
+				sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, member.vec_channels[i], this->_nickName));
 				return;
 			}
 			int index = Server::retChannel(str);
@@ -56,7 +61,7 @@ void Client::executePrivMsg()
 						if (clients[j]._nickName != this->_nickName)
 						{
 							if (vec[vec.size() - 1].empty())
-								sendRepance(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+								sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 							else
 							{
 								std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + "#" + Server::_channels[index].getChannelName() + " :" + vec[vec.size() - 1] + "\r\n";
@@ -66,10 +71,10 @@ void Client::executePrivMsg()
 					}
 				}
 				else
-					sendRepance(ERR_CANNOTSENDTOCHAN(Server::_hostname, member.vec_channels[i], this->_nickName));
+					sendTo(ERR_CANNOTSENDTOCHAN(Server::_hostname, member.vec_channels[i], this->_nickName));
 			}
 			else
-				sendRepance(ERR_NOSUCHCHANNEL(Server::_hostname, member.vec_channels[i], this->_nickName));
+				sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, member.vec_channels[i], this->_nickName));
 		}
 		for (size_t i = 0; i < member.vec_clients.size(); i++)
 		{
@@ -79,7 +84,7 @@ void Client::executePrivMsg()
 				if (Server::cObjs[index]._nickName != this->_nickName)
 				{
 					if (vec[vec.size() - 1].empty())
-						sendRepance(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+						sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 					else
 					{
 						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + Server::cObjs[index].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
@@ -88,11 +93,11 @@ void Client::executePrivMsg()
 				}
 			}
 			else
-				sendRepance(Server::_hostname + " 401 " + this->_nickName + " " + member.vec_clients[i] + " :No such nick\r\n");
+				sendTo(Server::_hostname + " 401 " + this->_nickName + " " + member.vec_clients[i] + " :No such nick\r\n");
 		}
 	}
 	else
-		sendRepance(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
+		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }
 
 
@@ -101,12 +106,17 @@ void Client::executeNotice()
 {
 	if (this->_registred)
 	{
+		if (!vec.size())
+		{
+			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+			return;
+		}
 		std::string tmp = removeExtraChar(vec[0], ',');
 		t_members member = splitMembers(tmp);
 		std::string str;
 		if (vec.size() < 2)
 		{
-			sendRepance(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+			sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 			return;
 		}
 		for (size_t i = 0; i < member.vec_channels.size(); i++)
@@ -126,7 +136,7 @@ void Client::executeNotice()
 						if (clients[j]._nickName != this->_nickName)
 						{
 							if (vec[vec.size() - 1].empty())
-								sendRepance(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+								sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 							else
 							{
 								std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NOTICE " + "#" + Server::_channels[index].getChannelName() + " :" + vec[vec.size() - 1] + "\r\n";
@@ -145,7 +155,7 @@ void Client::executeNotice()
 				if (Server::cObjs[index]._nickName != this->_nickName)
 				{
 					if (vec[vec.size() - 1].empty())
-						sendRepance(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+						sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 					else
 					{
 						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NOTICE " + this->_nickName + " :" + vec[vec.size() - 1] + "\r\n";

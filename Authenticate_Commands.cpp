@@ -4,10 +4,7 @@
 #include "Channel.hpp"
 
 /******************* Utils Functions **********************/
-void Client::sendRepance(const std::string& msg)
-{
-	send(this->_fd, msg.c_str(), msg.size(), 0);
-} 
+
 bool specialCharacter(std::string &str)
 {
 	std::string sp = "-[]\\'^{}";
@@ -44,20 +41,20 @@ void Client::isRegesterd()
 	if (this->_nick && this->_user && !this->_registred)
 	{
 		this->_registred = true;
-		sendRepance(RPL_WELCOME(this->_nickName, Server::_hostname));
-		sendRepance(RPL_YOURHOST(this->_nickName, Server::_hostname));
-		sendRepance(RPL_CREATED(this->_nickName, Server::_hostname));
-		sendRepance(RPL_MYINFO(this->_nickName, Server::_hostname));
+		sendTo(RPL_WELCOME(this->_nickName, Server::_hostname));
+		sendTo(RPL_YOURHOST(this->_nickName, Server::_hostname));
+		sendTo(RPL_CREATED(this->_nickName, Server::_hostname));
+		sendTo(RPL_MYINFO(this->_nickName, Server::_hostname));
 	}
 }
 /******************* PASS Commande **********************/
 void Client::executePass()
 {
 	if (this->_registred)
-		sendRepance(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
+		sendTo(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
 	else
 	{
-		if (vec.size() && !vec[0].empty())
+		if (vec.size() != 0)
 		{
 			this->_pass = true;
 			if (vec[0].compare(this->_password) == 0)
@@ -65,11 +62,11 @@ void Client::executePass()
 			else
 			{
 				this->_authenticated = false;
-				sendRepance(ERR_PASSWDMISMATCH(this->_nickName, Server::_hostname));
+				sendTo(ERR_PASSWDMISMATCH(this->_nickName, Server::_hostname));
 			}
 		}
 		else
-			sendRepance(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
 	}
 }
 
@@ -85,7 +82,7 @@ void Client::executeNick()
 			if (Server::cObjs[i].getFd() != this->_fd
 				&& Server::cObjs[i]._nickName == vec[0] && Server::cObjs[i]._registred)
 			{
-				sendRepance(ERR_NICKNAMEINUSE(this->_nickName, Server::_hostname));
+				sendTo(ERR_NICKNAMEINUSE(this->_nickName, Server::_hostname));
 				return ;
 			}
 		}
@@ -98,20 +95,20 @@ void Client::executeNick()
 				isRegesterd();
 			}
 			else
-				sendRepance(ERR_ERRONEUSNICKNAME(this->_nickName, Server::_hostname));
+				sendTo(ERR_ERRONEUSNICKNAME(this->_nickName, Server::_hostname));
 		}
 		else
-			sendRepance(ERR_NONICKNAMEGIVEN(this->_nickName, Server::_hostname));
+			sendTo(ERR_NONICKNAMEGIVEN(this->_nickName, Server::_hostname));
 	}
 	else
-		sendRepance(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
+		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }
 
 /******************* USER Command **********************/
 void Client::executeUser()
 {
 	if (this->_registred)
-		sendRepance(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
+		sendTo(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
 	if (this->_pass && this->_authenticated)
 	{
 		if (vec.size() >= 4)
@@ -123,15 +120,16 @@ void Client::executeUser()
 			isRegesterd();
 		}
 		else
-			sendRepance(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
 	}
 	else
-		sendRepance(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
+		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }
 
 
 void Client::executeQuit()
 {
+	std::cout << "pollserver: socket " << this->_fd <<" hung up\n";
 	close(this->_fd);
 	for (size_t j = 0; j < Server::_channels.size(); j++)
 	{
