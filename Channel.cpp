@@ -14,6 +14,9 @@ Channel& Channel::operator=(const Channel& obj) {
 		this->_channelName = obj._channelName;
 		this->_channel = obj._channel;
 		this->_operator = obj._operator;
+		this->channelTopic = obj.channelTopic;
+		this->key = obj.key;
+		this->limitMbr = obj.limitMbr;
 	}
 	return *this;
 }

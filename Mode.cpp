@@ -17,8 +17,8 @@ bool Client::checkError() {
 		sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, str, this->_nickName));
 		return true;
 	}
-	if (Server::findOperator(vec[0], this->_nickName) != this->_fd) {
-		sendTo(ERR_NOTOP(Server::_hostname, str));
+	if (!Server::isMember(vec[0], this->_nickName)) {
+		sendTo(ERR_USERNOTINCHANNEL(Server::_hostname, str));
 		return true;
 	}
 	return false;
@@ -153,6 +153,10 @@ void Client::Mode() {
 		return;
 	}
 	std::string str = "#" + vec[0];
+	if (Server::findOperator(vec[0], this->_nickName) != this->_fd) {
+		sendTo(ERR_NOTOP(Server::_hostname, str));
+		return ;
+	}
 	char sign = '+';
 	int index = Server::retChannel(vec[0]);
 	for (size_t i = 1; i < vec.size(); i++)

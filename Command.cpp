@@ -9,6 +9,12 @@ void Client::sendClients(std::string msg, std::string channel) {
 	{
 		if (Server::isMember(channel, Server::cObjs[i].getNickName()))
 			send(Server::cObjs[i].getFd(), msg.c_str(), msg.length(), 0);
+		if(channel == "" && Server::cObjs[i].getNickName() != this->_nickName && Server::cObjs[i]._registred)
+		{
+			std::string toSend =":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " 
+				+ Server::cObjs[i].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
+			send(Server::cObjs[i].getFd(), toSend.c_str(), toSend.length(), 0);
+		}
 	}
 }
 
@@ -85,7 +91,6 @@ void Client::Invite() {
 		return ;
 	}
 	std::string str = vec[1];
-	std::cout << str[1] << std::endl;
 	if (str[0] == '#' && str.length() > 1)
 		vec[1] = vec[1].substr(1);
 	else {
@@ -110,7 +115,6 @@ void Client::Invite() {
 		int i = Server::retClient(vec[0]);
 		Server::cObjs[i].channelInvite.push_back(vec[1]);
 	}
-	std::cout << isInvited(vec[1]) << std::endl;
 	sendTo(":" + Server::_hostname + " 341 " + this->_nickName + " " + vec[0] + " " + vec[1]+ "\r\n");
 	sendClient(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " INVITE "
 		+ vec[0] + " " + str + "\r\n", Server::retFd(vec[0]));

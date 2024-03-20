@@ -29,7 +29,6 @@ class Client
 		std::string	_nickName;
 		std::string	_userName;
 		std::string	_realName;
-		// std::string	_hostName;
 		std::string	_password;
 		std::string _port;
 		bool		_authenticated;
@@ -38,7 +37,6 @@ class Client
 		bool		_nick;
 		bool		_user;
 		int			_fd;
-		int			_maxChannel;
 		char		clientIp[INET_ADDRSTRLEN];
 	public:
 		bool error;
@@ -49,19 +47,21 @@ class Client
 		~Client();
 
 		//Parce and execute Command
-		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
+		void RecvClient(pollfd& pfd, bool &flag);
 		void parceCommand();
+		std::string to_Upper(std::string str);
 
 		//----------Setter---------
 		void setFd(int fd);
 		void setPassword(const std::string& pass);
 		void setClientIp(std::string ip);
-		//-------------Getter--------------
+
+		// //-------------Getter--------------
 		std::string getPassword() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
+		std::string getRealName() const;
 		int getFd() const;
-
 		//---------------Commands Utils---------------
 		void sendClients(std::string msg, std::string channel);
 		void sendTo(std::string msg);
@@ -75,18 +75,24 @@ class Client
 		void checkOperatorFlag(char sign, int index, std::string channel, std::string arg);
 		void checkKeyFlag(char sign, int index, std::string channel, std::string arg);
 		//---------------
-		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);
 		void addToExistChannel(int index, std::string channelName);
 		std::vector<std::pair<std::string, std::string> > splitChannels(std::string& channels_Name);
 		std::string removeExtraChar(const std::string& input, char del);
-		void sendMsg(Client &client);
+		int existChannel(std::string channelName);
+		void nicknameSet(bool flag);
+		void isRegesterd();
+		void executeBotClient(Client &client);
+		void executeBotChannel();
 		//----------------Command---------------
 		void executePass();
 		void executeNick();
 		void executeUser();
 		void executeJoin();
 		void executePrivMsg();
+		void executeNotice();
+		void executeQuit();
+		void executeBot();
 		void Topic();
 		void Mode();
 		void Kick();

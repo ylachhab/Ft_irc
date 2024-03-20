@@ -28,7 +28,6 @@ Client& Client::operator=(const Client& obj)
 		this->_userName = obj._userName;
 		this->_realName = obj._realName;
 		this->_fd = obj._fd;
-		// this->_hostName = obj._hostName;
 		this->_nickName = obj._nickName;
 		this->_password = obj._password;
 		this->_port = obj._port;
@@ -61,6 +60,12 @@ std::string Client::getNickName() const
 	return this->_nickName;
 }
 
+std::string Client::getRealName() const
+{
+	return this->_realName;
+}
+
+
 //---------------Setter-----------------
 
 void Client::setPassword(const std::string& pass)
@@ -84,7 +89,7 @@ int Client::getFd() const
 
 /*************Parce && execute Commands*****************/
 
-std::string to_Upper(std::string str)
+std::string Client::to_Upper(std::string str)
 {
 	for (size_t i = 0; i < str.size(); i++)
 		str[i] = toupper(str[i]);
@@ -122,13 +127,10 @@ void Client::parceCommand() {
 			cmd = str.substr(0, index);
 			str = str.substr(index);
 		}
-		else
-		{
-			std::cout << "Error this is not command" << std::endl;
-			if (tmp.empty())
-				break;
-			continue;
-		}
+		cmd = str;
+		str = "";
+		if (cmd.empty())
+			break;
 		index = str.find_first_not_of(" \t");
 		if (index != std::string::npos)
 		{
@@ -137,20 +139,23 @@ void Client::parceCommand() {
 			else
 			{
 				str = str.substr(index);
+				std::string strTmp = str;
 				char* split_str = std::strtok(const_cast<char*>(str.c_str()), " \t");
 				while(split_str != NULL)
 				{
 					vec.push_back(split_str);
 					split_str = std::strtok(NULL, " \t");
-				}	
+					strTmp = strTmp.substr(vec.back().size());
+					size_t j = strTmp.find_first_not_of(" \t");
+					if (j != std::string::npos)
+						strTmp = strTmp.substr(j);
+					if (split_str && split_str[0] == ':')
+					{
+						vec.push_back(strTmp.substr(1));
+						break;
+					}
+				}
 			}
-		}
-		else
-		{
-			std::cout << "Error this is not command++" << std::endl;
-			if (tmp.empty())
-				break;
-			continue;
 		}
 		if (to_Upper(cmd) == "PASS")
 			executePass();
@@ -170,6 +175,18 @@ void Client::parceCommand() {
 			Topic();
 		else if (to_Upper(cmd) == "PRIVMSG")
 			executePrivMsg();
+		else if (to_Upper(cmd) == "NOTICE")
+			executeNotice();
+		else if (to_Upper(cmd) == "QUIT")
+			executeQuit();
+		else if (to_Upper(cmd) == "BOT")
+			executeBot();
+		else if (to_Upper(cmd) == "PONG" || cmd.empty()) {
+			vec.clear();
+			continue;
+		}
+		else
+			sendTo(ERR_UNKNOWNCOMMAND(this->_nickName, Server::_hostname, cmd));
 		if (tmp.empty())
 		{
 			vec.clear();
@@ -179,7 +196,7 @@ void Client::parceCommand() {
 	}
 }
 
-void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
+void Client::RecvClient(pollfd& pfd, bool &flag) {
 	error = false;
 	char buf[512];
 	std::memset(&buf, 0, sizeof buf);
@@ -189,10 +206,8 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 	if (nbyte <= 0) {
 		if (nbyte == 0)
 			std::cout << "pollserver: socket " << clientFd <<" hung up\n";
-		else {
+		else
 			std::cout << "Error in recv\n";
-			std::exit(1);
-		}
 		close(pfd.fd);
 		error = true;
 	}
@@ -203,14 +218,6 @@ void Client::RecvClient(pollfd& pfd, int sockfd, bool &flag) {
 			return ;
 		}
 		parceCommand();
-		int destFd = pfd.fd;
-		if (destFd != sockfd && destFd != clientFd)
-		{
-			if (send(destFd, buf, nbyte, 0) == -1)
-			{
-				std::cout << "Error in send" << std::endl;
-			}
-		}
 	}
 	buffer.clear();
 }

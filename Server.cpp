@@ -1,5 +1,6 @@
 #include "Server.hpp"
 
+std::vector <pollfd > Server::pfds;
 std::vector <Client > Server::cObjs;
 std::vector <Channel > Server::_channels;
 std::string Server::_hostname = "FT_IRC.1337.ma";
@@ -122,12 +123,21 @@ int isNumber(std::string str)
 std::string Server::concatenateClients(Channel &vec)
 {
 	std::string conStr;
+	std::vector<std::string> tmp_vec;
 
 	for (size_t i = 0; i < vec.getChannel().size(); i++)
 	{
 		if (vec.isOperator(vec.getChannel()[i].getNickName()) != -1)
-			conStr += "@";
+		{
+			tmp_vec.push_back("@" + vec.getChannel()[i].getNickName());
+			continue;
+		}
 		conStr += vec.getChannel()[i].getNickName();
+		conStr += " ";
+	}
+	for (size_t i = 0; i < tmp_vec.size(); i++)
+	{
+		conStr += tmp_vec[i];
 		conStr += " ";
 	}
 	return conStr;
@@ -168,7 +178,7 @@ int Server::get_socket() {
 	freeaddrinfo(ai);
 	if (p == NULL)
 		return -1;
-	if (listen(socfd, 10) == -1)
+	if (listen(socfd, INT_MAX) == -1)
 		return -1;
 	return socfd;
 }
@@ -189,7 +199,6 @@ void Server::deletePfds(int i){
 }
 
 Server::Server(std::string port, std::string password) {
-
 	if (isNumber(port) || port.empty())
 	{
 		std::cout << "Error in port" << std::endl;
@@ -207,7 +216,6 @@ Server::Server(std::string port, std::string password) {
 	socklen_t addLen;
 	struct sockaddr_storage cAddr;
 	int newFd;
-	char remoteIP[INET6_ADDRSTRLEN];
 	bool flag;
 	while (1) {
 		int pcount = poll(pfds.data(), pfds.size(), -1);
@@ -239,13 +247,11 @@ Server::Server(std::string port, std::string password) {
 						cObj.setClientIp(ipStr);
 						cObj.setFd(newFd);
 						cObjs.push_back(cObj);
-						std::cout << "pollserver: new connection from " << inet_ntop(cAddr.ss_family, 
-							getAddr((struct sockaddr*)&cAddr), remoteIP, INET6_ADDRSTRLEN)
-							<< " on socket " << newFd << std::endl;
+						std::cout << "pollserver: new connection from " << ipStr << " on socket " << newFd << std::endl;
 					}
 				}
 				else {
-					cObjs[i - 1].RecvClient(pfds[i], sockfd, flag);
+					cObjs[i - 1].RecvClient(pfds[i], flag);
 					if (flag)
 					{
 						flag = false;
@@ -253,6 +259,11 @@ Server::Server(std::string port, std::string password) {
 					}
 					if (cObjs[i - 1].error)
 					{
+						for (size_t j = 0; j < Server::_channels.size(); j++)
+						{
+							Server::_channels[j].eraseMember(cObjs[i - 1].getNickName());
+							Server::_channels[j].eraseOperator(cObjs[i - 1].getFd());
+						}
 						pfds.erase(pfds.begin() + i);
 						cObjs.erase(cObjs.begin() + (i - 1));
 					}
