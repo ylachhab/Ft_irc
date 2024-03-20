@@ -1,8 +1,10 @@
 #include "Server.hpp"
 
+std::vector <pollfd > Server::pfds;
 std::vector <Client > Server::cObjs;
 std::vector <Channel > Server::_channels;
 std::string Server::_hostname = "FT_IRC.1337.ma";
+
 
 Server::Server()
 {
@@ -75,16 +77,16 @@ int Server::retChannel(std::string channel) {
 		if (_channels[i].getChannelName() == channel)
 			return i;
 	}
-	return 0;
+	return -1;
 }
 
-int Server::retClient(std::string Client) {
+int Server::retClient(std::string client) {
 	for (size_t i = 0; i < cObjs.size(); i++)
 	{
-		if (cObjs[i].getNickName() == Client)
+		if (cObjs[i].getNickName() == client)
 			return i;
 	}
-	return 0;
+	return -1;
 }
 
 int Server::findOperator(std::string channel, std::string nick) {
@@ -116,6 +118,29 @@ int isNumber(std::string str)
 			return (1);
 	}
 	return (0);
+}
+
+std::string Server::concatenateClients(Channel &vec)
+{
+	std::string conStr;
+	std::vector<std::string> tmp_vec;
+
+	for (size_t i = 0; i < vec.getChannel().size(); i++)
+	{
+		if (vec.isOperator(vec.getChannel()[i].getNickName()) != -1)
+		{
+			tmp_vec.push_back("@" + vec.getChannel()[i].getNickName());
+			continue;
+		}
+		conStr += vec.getChannel()[i].getNickName();
+		conStr += " ";
+	}
+	for (size_t i = 0; i < tmp_vec.size(); i++)
+	{
+		conStr += tmp_vec[i];
+		conStr += " ";
+	}
+	return conStr;
 }
 
 int Server::get_socket() {
@@ -234,6 +259,11 @@ Server::Server(std::string port, std::string password) {
 					}
 					if (cObjs[i - 1].error)
 					{
+						for (size_t j = 0; j < Server::_channels.size(); j++)
+						{
+							Server::_channels[j].eraseMember(cObjs[i - 1].getNickName());
+							Server::_channels[j].eraseOperator(cObjs[i - 1].getFd());
+						}
 						pfds.erase(pfds.begin() + i);
 						cObjs.erase(cObjs.begin() + (i - 1));
 					}

@@ -14,6 +14,9 @@ Channel& Channel::operator=(const Channel& obj) {
 		this->_channelName = obj._channelName;
 		this->_channel = obj._channel;
 		this->_operator = obj._operator;
+		this->channelTopic = obj.channelTopic;
+		this->key = obj.key;
+		this->limitMbr = obj.limitMbr;
 	}
 	return *this;
 }
@@ -31,7 +34,6 @@ void Channel::setChannelName(std::string name) {
 void Channel::setOperator(int oper, std::string nickname) {
 	this->_operator[oper] = nickname;
 }
-
 
 void Channel::setlimitMbr(int nbr) {
 	this->limitMbr = nbr;
@@ -126,6 +128,12 @@ bool ChannelMode::allOff(){
 
 bool ChannelMode::allOn(){
 	if (_inviteOnly && _topic && _key && _limit)
+		return true;
+	return false;
+}
+
+bool ChannelMode::IKLoff(){
+	if (!_inviteOnly && !_key && !_limit)
 		return true;
 	return false;
 }

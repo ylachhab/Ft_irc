@@ -16,6 +16,7 @@ struct ChannelMode {
 	bool _limit;
 	ChannelMode();
 	bool allOn();
+	bool IKLoff();
 	bool allOff();
 };
 
@@ -23,7 +24,7 @@ class Channel {
 	private :
 		std::string _channelName;
 		std::vector <Client > _channel;
-		int limitMbr; // max member of client can a channel hold
+		int limitMbr;
 		std::string key;
 		std::map<int, std::string> _operator;
 		std::string channelTopic;

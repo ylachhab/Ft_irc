@@ -4,13 +4,13 @@
 #include "Channel.hpp"
 
 /******************* Utils Functions **********************/
-void Client::sendRepance(const std::string& msg)
-{
-	send(this->_fd, msg.c_str(), msg.size(), 0);
-} 
+
 bool specialCharacter(std::string &str)
 {
 	std::string sp = "-[]\\'^{}";
+	std::string num = "0123456789";
+	if (num.find(str[0]) != std::string::npos)
+		return true;
 	for (std::string::iterator it = str.begin(); it != str.end(); it++)
 	{
 		if (!std::isalpha(*it) && !std::isdigit(*it) && sp.find(*it) == std::string::npos)
@@ -18,14 +18,43 @@ bool specialCharacter(std::string &str)
 	}
 	return false;
 }
-/******************* PASS Command **********************/
-void Client::executePass(std::vector<std::string> &vec)
+
+void Client::nicknameSet(bool flag)
+{
+	if (flag)
+	{
+		for (size_t i = 0; i < Server::cObjs.size(); i++)
+		{
+			if (Server::cObjs[i].getFd() != this->_fd
+				&& Server::cObjs[i]._nickName == this->_nickName && !Server::cObjs[i]._registred)
+			{
+				std::string msg = "ERROR :Closing Link: ss by tngnet.nl.quakenet.org (Overridden by other sign on)";
+				send(Server::cObjs[i].getFd(), msg.c_str(), msg.length(), 0);
+				close(Server::cObjs[i].getFd());
+			}
+		}
+	}
+}
+
+void Client::isRegesterd()
+{
+	if (this->_nick && this->_user && !this->_registred)
+	{
+		this->_registred = true;
+		sendTo(RPL_WELCOME(this->_nickName, Server::_hostname));
+		sendTo(RPL_YOURHOST(this->_nickName, Server::_hostname));
+		sendTo(RPL_CREATED(this->_nickName, Server::_hostname));
+		sendTo(RPL_MYINFO(this->_nickName, Server::_hostname));
+	}
+}
+/******************* PASS Commande **********************/
+void Client::executePass()
 {
 	if (this->_registred)
-		sendRepance(":yasmine 462 " + this->_nickName + " :You may not reregister\r\n");
+		sendTo(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
 	else
 	{
-		if (vec.size() && !vec[0].empty())
+		if (vec.size() != 0)
 		{
 			this->_pass = true;
 			if (vec[0].compare(this->_password) == 0)
@@ -33,25 +62,27 @@ void Client::executePass(std::vector<std::string> &vec)
 			else
 			{
 				this->_authenticated = false;
-				sendRepance(":yasmine 464 " + this->_nickName + " :Password incorrect\r\n");
+				sendTo(ERR_PASSWDMISMATCH(this->_nickName, Server::_hostname));
 			}
 		}
 		else
-			sendRepance(":yasmine  461 " + this->_nickName + " :Not enough parameters");
+			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
 	}
 }
 
 
 /******************* NICK Command **********************/
-void Client::executeNick(std::vector<std::string> &vec)
+void Client::executeNick()
 {
 	if (this->_pass && this->_authenticated)
 	{
+		nicknameSet(this->_user);
 		for (size_t i = 0; i < Server::cObjs.size(); i++)
 		{
-			if (Server::cObjs[i]._nickName == vec[0])
+			if (Server::cObjs[i].getFd() != this->_fd
+				&& Server::cObjs[i]._nickName == vec[0] && Server::cObjs[i]._registred)
 			{
-				sendRepance(":yasmin 433 " + this->_nickName + " " + vec[0] + " :Nickname is already in use\r\n");
+				sendTo(ERR_NICKNAMEINUSE(this->_nickName, Server::_hostname));
 				return ;
 			}
 		}
@@ -60,45 +91,65 @@ void Client::executeNick(std::vector<std::string> &vec)
 			if (specialCharacter(vec[0]) == 0)
 			{
 				this->_nick = true;
-				this->_nickName = vec[0];
+				if (!this->_registred)
+					this->_nickName = vec[0];
+				else
+				{
+					for (size_t i = 0; i < Server::_channels.size(); i++)
+					{
+						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NICK " + ":" + vec[0] + "\r\n";
+						if (Server::isMember(Server::_channels[i].getChannelName(), this->_nickName))
+							sendClients(msg, Server::_channels[i].getChannelName());
+						else
+							sendTo(msg);
+					}
+					this->_nickName = vec[0];
+				}
+				isRegesterd();
 			}
 			else
-				sendRepance(":yasmine 432 " + this->_nickName  + " " + vec[0] + " :Erroneous Nickname\r\n");
+				sendTo(ERR_ERRONEUSNICKNAME(this->_nickName, Server::_hostname));
 		}
 		else
-			sendRepance(":yasmine 431 " + this->_nickName  + " :No nickname given\r\n");
+			sendTo(ERR_NONICKNAMEGIVEN(this->_nickName, Server::_hostname));
 	}
 	else
-		sendRepance(":yasmine 451 " + this->_nickName + " :Register first(set the password)\r\n");
+		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }
 
 /******************* USER Command **********************/
-void Client::executeUser(std::vector<std::string> &vec)
+void Client::executeUser()
 {
 	if (this->_registred)
-		sendRepance(":yasmine 462 " + this->_nickName + " :You may not reregister\r\n");
-	if (this->_pass && this->_nick && this->_authenticated)
+		sendTo(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
+	if (this->_pass && this->_authenticated)
 	{
 		if (vec.size() >= 4)
 		{
-			// if(specialCharacter(vec[0]) == 0)
-			// {
+			nicknameSet(this->_nick);
 			this->_userName = vec[0];
 			this->_realName = vec[3];
 			this->_user = true;
-			this->_registred = true;
-			std::cout << "the user " << this->_userName << " was successfully regestred ";
-			if (this->_authenticated)
-				std::cout << "and authenticated!\n";
-			else
-				std::cout << "but not authenticated!\n";
-			// }
-			// else
-			// 	sendRepance(":yasmine 468 " + this->_nickName + " :Your username is invalid.\r\n");
+			isRegesterd();
 		}
 		else
-			sendRepance(":yasmine 461 " + this->_nickName + " USER :Not enough parameters\r\n");
+			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
 	}
 	else
-		sendRepance(":yasmine 451 " + this->_nickName + " :Register first(Set the password and a nickname)\r\n");
+		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
+}
+
+
+void Client::executeQuit()
+{
+	std::cout << "pollserver: socket " << this->_fd <<" hung up\n";
+	close(this->_fd);
+	for (size_t j = 0; j < Server::_channels.size(); j++)
+	{
+		Server::_channels[j].eraseMember(this->_nickName);
+		Server::_channels[j].eraseOperator(this->_fd);
+	}
+	int i = Server::retClient(this->_nickName);
+	Server::cObjs.erase(Server::cObjs.begin() + i);
+	Server::pfds.erase(Server::pfds.begin() + i + 1);
 }

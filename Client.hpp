@@ -18,7 +18,7 @@
 #include <cctype>
 #include "Server.hpp"
 #include "Channel.hpp"
-#include "Message.hpp"
+#include "Replies_msg.hpp"
 
 class Client
 {
@@ -29,7 +29,6 @@ class Client
 		std::string	_nickName;
 		std::string	_userName;
 		std::string	_realName;
-		// std::string	_hostName;
 		std::string	_password;
 		std::string _port;
 		bool		_authenticated;
@@ -38,7 +37,6 @@ class Client
 		bool		_nick;
 		bool		_user;
 		int			_fd;
-		int			_maxChannel;
 		char		clientIp[INET_ADDRSTRLEN];
 	public:
 		bool error;
@@ -51,55 +49,54 @@ class Client
 		//Parce and execute Command
 		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
 		void parceCommand();
+		std::string to_Upper(std::string str);
 
 		//----------Setter---------
 		void setFd(int fd);
 		void setPassword(const std::string& pass);
 		void setClientIp(std::string ip);
-		// void setMaxChannel(int max_channels);
-		// void setNickName(std::string nickName);
-		// void setUserName(std::string userName);
-		// void setAuthenticated(bool authenticated);
-		// void setRegisted(bool registed);
 
 		// //-------------Getter--------------
 		std::string getPassword() const;
-		// void getClientIp(std::string ip);
-		// int	 getMaxChannel() const;
 		std::string getNickName() const;
 		std::string getUserName() const;
-		// bool getAuthenticated() const;
-		// bool getRegisted() const;
+		std::string getRealName() const;
 		int getFd() const;
-
-		//----------------Command---------------
+		//---------------Commands Utils---------------
 		void sendClients(std::string msg, std::string channel);
-		void Kick();
-
-		//---------------
 		void sendTo(std::string msg);
 		bool isInvited(std::string channel);
-		void Invite();
-
 		//---------------
 		bool checkError();
 		void checkFlag(std::string channel);
+		//---------------
 		void checkTopic(char sign, int index, std::string channel);
 		void checkInvite(char sign, int index, std::string channel);
 		void checkOperatorFlag(char sign, int index, std::string channel, std::string arg);
 		void checkKeyFlag(char sign, int index, std::string channel, std::string arg);
-		void Mode();
-		
 		//---------------
-		void Topic();
-
-		void sendRepance(const std::string& str);
 		void addNewChannel(std::string channelName);
-		//Commands
-		void executePass(std::vector<std::string> &vec);
-		void executeNick(std::vector<std::string> &vec);
-		void executeUser(std::vector<std::string> &vec);
-		void executeJoin(std::vector<std::string> &vec);
+		void addToExistChannel(int index, std::string channelName);
+		std::vector<std::pair<std::string, std::string> > splitChannels(std::string& channels_Name);
+		std::string removeExtraChar(const std::string& input, char del);
+		int existChannel(std::string channelName);
+		void nicknameSet(bool flag);
+		void isRegesterd();
+		void executeBotClient(Client &client);
+		void executeBotChannel();
+		//----------------Command---------------
+		void executePass();
+		void executeNick();
+		void executeUser();
+		void executeJoin();
+		void executePrivMsg();
+		void executeNotice();
+		void executeQuit();
+		void executeBot();
+		void Topic();
+		void Mode();
+		void Kick();
+		void Invite();
 };
 
 #endif
