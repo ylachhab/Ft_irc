@@ -53,7 +53,7 @@ std::string Channel::getChannelName() {
 	return (this->_channelName);
 }
 
-std::vector<Client> &Channel::getChannel()
+std::vector<Client *> &Channel::getChannel()
 {
 	return this->_channel;
 }
@@ -67,7 +67,7 @@ std::string Channel::getChannelName() const {
 	return _channelName;
 }
 
-std::map<int, std::string> Channel::getOperator() const {
+std::map<int, std::string > Channel::getOperator() const {
 	return _operator;
 }
 
@@ -85,7 +85,7 @@ bool Channel::isAMember(std::string nick)
 {
 	for (size_t i = 0; i < _channel.size(); i++)
 	{
-		if (_channel[i].getNickName() == nick)
+		if (_channel[i]->getNickName() == nick)
 			return true;
 	}
 	return false;
@@ -94,7 +94,7 @@ bool Channel::isAMember(std::string nick)
 void Channel::eraseMember(std::string nick) {
 	for (size_t i = 0; i < _channel.size(); i++)
 	{
-		if (_channel[i].getNickName() == nick)
+		if (_channel[i]->getNickName() == nick)
 			_channel.erase(_channel.begin() + i);
 	}
 }
@@ -104,7 +104,7 @@ void Channel::eraseOperator(int fd) {
 }
 
 int Channel::isOperator(std::string nickname) {
-	for (std::map<int, std::string>::iterator it = _operator.begin(); it != _operator.end(); ++it)
+	for (std::map<int, std::string >::iterator it = _operator.begin(); it != _operator.end(); ++it)
 	{
 		if (it->second == nickname)
 			return it->first;

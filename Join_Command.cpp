@@ -65,25 +65,25 @@ void Client::addNewChannel(std::string channelName)
 {
 	Channel channel;
 	channel.setChannelName(channelName);
-	channel.setOperator(this->_fd, this->getNickName());
-	channel.getChannel().push_back(*this);
+	channel.setOperator(this->_fd, this->_nickName);
+	channel.getChannel().push_back(this);
 	Server::_channels.push_back(channel);
 }
 
 void Client::addToExistChannel(int index, std::string channelName)
 {
-	Server::_channels[index].getChannel().push_back(*this);
+	Server::_channels[index].getChannel().push_back(this);
 	std::string clients = Server::concatenateClients(Server::_channels[index]);
 	sendTo(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp));
 	sendTo(RPL_NAMREPLY(Server::_hostname, clients, "#" + channelName, this->_nickName));
 	sendTo(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
-	std::vector<Client> vec_client = Server::_channels[index].getChannel();
+	std::vector<Client* > vec_client = Server::_channels[index].getChannel();
 	for (size_t i = 0; i < vec_client.size(); i++)
 	{
-		if (vec_client[i].getNickName() != this->_nickName)
+		if (vec_client[i]->getNickName() != this->_nickName)
 		{
 			std::string msg = RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp);
-			send(vec_client[i].getFd(), msg.c_str(), msg.length(), 0);
+			send(vec_client[i]->getFd(), msg.c_str(), msg.length(), 0);
 		}
 	}
 }

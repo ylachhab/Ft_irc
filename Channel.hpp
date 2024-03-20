@@ -23,10 +23,10 @@ struct ChannelMode {
 class Channel {
 	private :
 		std::string _channelName;
-		std::vector <Client > _channel;
+		std::vector <Client *> _channel;
+		std::map<int, std::string> _operator;
 		int limitMbr;
 		std::string key;
-		std::map<int, std::string> _operator;
 		std::string channelTopic;
 	public :
 		ChannelMode _channelMode;
@@ -45,7 +45,7 @@ class Channel {
 		//----------Getter-----------
 		std::string getChannelName();
 		std::string getChannelName() const;
-		std::vector<Client> &getChannel();
+		std::vector<Client*> &getChannel();
 		std::map<int, std::string> getOperator() const;
 		int getlimitMbr() const;
 		std::string getKey() const;

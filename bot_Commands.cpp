@@ -65,12 +65,12 @@ void Client::executeBotChannel()
 						sendTo(Server::_channels[index].getChannelTopic() + "\r\n");
 					if (Server::_channels[index]._channelMode._limit)
 						sendTo(std::string(BLUE) + "Channel limit is : " + std::string(RESET) + "" + std::to_string(Server::_channels[index].getlimitMbr()) + "\r\n");
-					std::vector<Client> vec_clients = Server::_channels[index].getChannel();
+					std::vector<Client *> vec_clients = Server::_channels[index].getChannel();
 					sendTo(std::string(BLUE) + "Channel Members : " + std::string(RESET) + "\r\n");
 					for (size_t i = 0; i < vec_clients.size(); i++)
 					{
-						sendTo(std::string(BLUE) + "- " + vec_clients[i].getNickName() + "" + std::string(RESET) + "");
-						if (vec_clients[i].getNickName() == this->_nickName)
+						sendTo(std::string(BLUE) + "- " + vec_clients[i]->getNickName() + "" + std::string(RESET) + "");
+						if (vec_clients[i]->getNickName() == this->_nickName)
 							sendTo(std::string(RED) + "(Me)" + std::string(RESET) + "");
 						sendTo("\r\n");
 					}

@@ -54,18 +54,18 @@ void Client::executePrivMsg()
 			{
 				if (Server::_channels[index].isAMember(this->_nickName))
 				{
-					std::vector<Client> clients = Server::_channels[index].getChannel();
+					std::vector<Client *> clients = Server::_channels[index].getChannel();
 
 					for (size_t j = 0; j < clients.size(); j++)
 					{
-						if (clients[j]._nickName != this->_nickName)
+						if (clients[j]->_nickName != this->_nickName)
 						{
 							if (vec[vec.size() - 1].empty())
 								sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 							else
 							{
 								std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + "#" + Server::_channels[index].getChannelName() + " :" + vec[vec.size() - 1] + "\r\n";
-								send(clients[j].getFd(), msg.c_str(), msg.length(), 0);
+								send(clients[j]->getFd(), msg.c_str(), msg.length(), 0);
 							}
 						}
 					}
@@ -81,15 +81,12 @@ void Client::executePrivMsg()
 			int index = Server::retClient(member.vec_clients[i]);
 			if (index != -1)
 			{
-				if (Server::cObjs[index]._nickName != this->_nickName)
+				if (vec[vec.size() - 1].empty())
+					sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+				else
 				{
-					if (vec[vec.size() - 1].empty())
-						sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
-					else
-					{
-						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + Server::cObjs[index].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
-						send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
-					}
+					std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + Server::cObjs[index].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
+					send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
 				}
 			}
 			else
@@ -129,18 +126,18 @@ void Client::executeNotice()
 			{
 				if (Server::_channels[index].isAMember(this->_nickName))
 				{
-					std::vector<Client> clients = Server::_channels[index].getChannel();
+					std::vector<Client *> clients = Server::_channels[index].getChannel();
 
 					for (size_t j = 0; j < clients.size(); j++)
 					{
-						if (clients[j]._nickName != this->_nickName)
+						if (clients[j]->_nickName != this->_nickName)
 						{
 							if (vec[vec.size() - 1].empty())
 								sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
 							else
 							{
 								std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NOTICE " + "#" + Server::_channels[index].getChannelName() + " :" + vec[vec.size() - 1] + "\r\n";
-								send(clients[j].getFd(), msg.c_str(), msg.length(), 0);
+								send(clients[j]->getFd(), msg.c_str(), msg.length(), 0);
 							}
 						}
 					}
@@ -152,15 +149,12 @@ void Client::executeNotice()
 			int index = Server::retClient(member.vec_clients[i]);
 			if (index != -1)
 			{
-				if (Server::cObjs[index]._nickName != this->_nickName)
+				if (vec[vec.size() - 1].empty())
+					sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+				else
 				{
-					if (vec[vec.size() - 1].empty())
-						sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
-					else
-					{
-						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NOTICE " + this->_nickName + " :" + vec[vec.size() - 1] + "\r\n";
-						send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
-					}
+					std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NOTICE " + this->_nickName + " :" + vec[vec.size() - 1] + "\r\n";
+					send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
 				}
 			}
 		}

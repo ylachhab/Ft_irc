@@ -127,10 +127,13 @@ void Client::parceCommand() {
 			cmd = str.substr(0, index);
 			str = str.substr(index);
 		}
-		cmd = str;
-		str = "";
-		if (cmd.empty())
-			break;
+		else
+		{
+			cmd = str;
+			str = "";
+			if (cmd.empty())
+				break;
+		}
 		index = str.find_first_not_of(" \t");
 		if (index != std::string::npos)
 		{

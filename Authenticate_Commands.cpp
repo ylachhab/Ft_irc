@@ -25,8 +25,8 @@ void Client::nicknameSet(bool flag)
 	{
 		for (size_t i = 0; i < Server::cObjs.size(); i++)
 		{
-			if (Server::cObjs[i].getFd() != this->_fd
-				&& Server::cObjs[i]._nickName == this->_nickName && !Server::cObjs[i]._registred)
+			if (Server::cObjs[i].getFd() != this->_fd && this->_nickName != "*"
+				&& Server::cObjs[i].getNickName() == this->_nickName && !Server::cObjs[i]._registred)
 			{
 				std::string msg = "ERROR :Closing Link: ss by tngnet.nl.quakenet.org (Overridden by other sign on)";
 				send(Server::cObjs[i].getFd(), msg.c_str(), msg.length(), 0);
@@ -99,7 +99,14 @@ void Client::executeNick()
 					{
 						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NICK " + ":" + vec[0] + "\r\n";
 						if (Server::isMember(Server::_channels[i].getChannelName(), this->_nickName))
+						{
 							sendClients(msg, Server::_channels[i].getChannelName());
+							if (Server::_channels[i].isOperator(this->_nickName))
+							{
+								Server::_channels[i].getOperator().erase(this->_fd);
+								Server::_channels[i].setOperator(this->_fd, vec[0]);
+							}
+						}
 						else
 							sendTo(msg);
 					}

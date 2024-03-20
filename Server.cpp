@@ -127,12 +127,12 @@ std::string Server::concatenateClients(Channel &vec)
 
 	for (size_t i = 0; i < vec.getChannel().size(); i++)
 	{
-		if (vec.isOperator(vec.getChannel()[i].getNickName()) != -1)
+		if (vec.isOperator(vec.getChannel()[i]->getNickName()) != -1)
 		{
-			tmp_vec.push_back("@" + vec.getChannel()[i].getNickName());
+			tmp_vec.push_back("@" + vec.getChannel()[i]->getNickName());
 			continue;
 		}
-		conStr += vec.getChannel()[i].getNickName();
+		conStr += vec.getChannel()[i]->getNickName();
 		conStr += " ";
 	}
 	for (size_t i = 0; i < tmp_vec.size(); i++)
