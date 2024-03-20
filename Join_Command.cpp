@@ -77,11 +77,14 @@ void Client::addToExistChannel(int index, std::string channelName)
 	sendTo(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp));
 	sendTo(RPL_NAMREPLY(Server::_hostname, clients, "#" + channelName, this->_nickName));
 	sendTo(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
-	std::map<int, std::string> opers =  Server::_channels[index].getOperator();
-	for (std::map<int, std::string>::iterator it = opers.begin(); it != opers.end(); it++)
+	std::vector<Client> vec_client = Server::_channels[index].getChannel();
+	for (size_t i = 0; i < vec_client.size(); i++)
 	{
+		if (vec_client[i].getNickName() != this->_nickName)
+		{
 			std::string msg = RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp);
-			send (it->first, msg.c_str(), msg.length(), 0);
+			send(vec_client[i].getFd(), msg.c_str(), msg.length(), 0);
+		}
 	}
 }
 

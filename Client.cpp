@@ -127,11 +127,10 @@ void Client::parceCommand() {
 			cmd = str.substr(0, index);
 			str = str.substr(index);
 		}
-		else
-		{
-			cmd = str;
-			str = str.substr(str.size());
-		}
+		cmd = str;
+		str = "";
+		if (cmd.empty())
+			break;
 		index = str.find_first_not_of(" \t");
 		if (index != std::string::npos)
 		{
@@ -182,8 +181,10 @@ void Client::parceCommand() {
 			executeQuit();
 		else if (to_Upper(cmd) == "BOT")
 			executeBot();
-		else if (to_Upper(cmd) == "PONG")
+		else if (to_Upper(cmd) == "PONG" || cmd.empty()) {
+			vec.clear();
 			continue;
+		}
 		else
 			sendTo(ERR_UNKNOWNCOMMAND(this->_nickName, Server::_hostname, cmd));
 		if (tmp.empty())

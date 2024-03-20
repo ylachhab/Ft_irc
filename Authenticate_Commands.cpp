@@ -91,7 +91,20 @@ void Client::executeNick()
 			if (specialCharacter(vec[0]) == 0)
 			{
 				this->_nick = true;
-				this->_nickName = vec[0];
+				if (!this->_registred)
+					this->_nickName = vec[0];
+				else
+				{
+					for (size_t i = 0; i < Server::_channels.size(); i++)
+					{
+						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NICK " + ":" + vec[0] + "\r\n";
+						if (Server::isMember(Server::_channels[i].getChannelName(), this->_nickName))
+							sendClients(msg, Server::_channels[i].getChannelName());
+						else
+							sendTo(msg);
+					}
+					this->_nickName = vec[0];
+				}
 				isRegesterd();
 			}
 			else

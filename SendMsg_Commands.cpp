@@ -30,7 +30,7 @@ void Client::executePrivMsg()
 	{
 		if (!vec.size())
 		{
-			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+			sendTo(ERR_NORECIPIENT(this->_nickName, Server::_hostname, std::string("PRIVMSG")));
 			return;
 		}
 		std::string tmp = removeExtraChar(vec[0], ',');
@@ -108,7 +108,7 @@ void Client::executeNotice()
 	{
 		if (!vec.size())
 		{
-			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+			sendTo(ERR_NORECIPIENT(this->_nickName, Server::_hostname, std::string("NOTICE")));
 			return;
 		}
 		std::string tmp = removeExtraChar(vec[0], ',');

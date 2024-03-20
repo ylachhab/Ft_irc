@@ -20,8 +20,8 @@ bool Client::checkError() {
 		// sendTo(this->_nickName + " " + str + " :No such channel" + "\r\n");
 		return true;
 	}
-	if (Server::findOperator(vec[0], this->_nickName) != this->_fd) {
-		sendTo(ERR_NOTOP(Server::_hostname, str));
+	if (!Server::isMember(vec[0], this->_nickName)) {
+		sendTo(ERR_USERNOTINCHANNEL(Server::_hostname, str));
 		// sendTo(this->_nickName + " " + str + " :You're not channel operator" + "\r\n");
 		return true;
 	}
@@ -161,6 +161,11 @@ void Client::Mode() {
 		return;
 	}
 	std::string str = "#" + vec[0];
+	if (Server::findOperator(vec[0], this->_nickName) != this->_fd) {
+		sendTo(ERR_NOTOP(Server::_hostname, str));
+		// sendTo(this->_nickName + " " + str + " :You're not channel operator" + "\r\n");
+		return ;
+	}
 	char sign = '+';
 	int index = Server::retChannel(vec[0]);
 	for (size_t i = 1; i < vec.size(); i++)
