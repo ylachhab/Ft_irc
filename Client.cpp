@@ -189,7 +189,7 @@ void Client::parceCommand() {
 			executeQuit();
 		else if (to_Upper(cmd) == "BOT")
 			executeBot();
-		else if (to_Upper(cmd) == "PONG" || cmd.empty()) {
+		else if (to_Upper(cmd) == "PONG" || cmd == Server::_hostname) {
 			vec.clear();
 			continue;
 		}
