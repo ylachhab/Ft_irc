@@ -100,6 +100,7 @@ void Client::executeNick()
 			if (specialCharacter(vec[0]) == 0)
 			{
 				this->_nick = true;
+				vec[0] = vec[0].substr(0, 15);
 				if (!this->_registred)
 					this->_nickName = vec[0];
 				else
@@ -143,6 +144,8 @@ void Client::executeUser()
 	{
 		if (vec.size() >= 4)
 		{
+			vec[0] = vec[0].substr(0, 10);
+			vec[3] = vec[3].substr(0, 20);
 			nicknameSet(this->_nick);
 			this->_userName = vec[0];
 			this->_realName = vec[3];
