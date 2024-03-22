@@ -47,6 +47,15 @@ void Client::isRegesterd()
 		sendTo(RPL_MYINFO(this->_nickName, Server::_hostname));
 	}
 }
+
+void Client::sendToAll(std::string msg, std::string channel) {
+	for (size_t i = 0; i < Server::cObjs.size(); i++)
+	{
+		if (Server::isMember(channel, Server::cObjs[i].getNickName()) 
+			&& Server::cObjs[i].getNickName() != this->_nickName)
+			send(Server::cObjs[i].getFd(), msg.c_str(), msg.length(), 0);
+	}
+}
 /******************* PASS Commande **********************/
 void Client::executePass()
 {
@@ -95,14 +104,22 @@ void Client::executeNick()
 					this->_nickName = vec[0];
 				else
 				{
+					std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NICK " + ":" + vec[0] + "\r\n";
 					for (size_t i = 0; i < Server::_channels.size(); i++)
 					{
-						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NICK " + ":" + vec[0] + "\r\n";
 						if (Server::isMember(Server::_channels[i].getChannelName(), this->_nickName))
-							sendClients(msg, Server::_channels[i].getChannelName());
-						else
-							sendTo(msg);
+						{
+							sendToAll(msg, Server::_channels[i].getChannelName());
+							int index = Server::retChannelMember(this->_nickName, i);
+							Server::_channels[i].getChannel()[index].setNickName(vec[0]);
+							if (Server::_channels[i].isOperator(this->_nickName))
+							{
+								Server::_channels[i].getOperator().erase(this->_fd);
+								Server::_channels[i].setOperator(this->_fd, vec[0]);
+							}
+						}
 					}
+					sendTo(msg);
 					this->_nickName = vec[0];
 				}
 				isRegesterd();

@@ -73,6 +73,11 @@ void Client::setPassword(const std::string& pass)
 	this->_password = pass;
 }
 
+void Client::setNickName(const std::string& nickname)
+{
+	this->_nickName = nickname;
+}
+
 void Client::setClientIp(const std::string ip)
 {
 	std::memcpy(this->clientIp, ip.c_str(), INET_ADDRSTRLEN);
@@ -127,10 +132,13 @@ void Client::parceCommand() {
 			cmd = str.substr(0, index);
 			str = str.substr(index);
 		}
-		cmd = str;
-		str = "";
-		if (cmd.empty())
-			break;
+		else
+		{
+			cmd = str;
+			str = "";
+			if (cmd.empty())
+				break;
+		}
 		index = str.find_first_not_of(" \t");
 		if (index != std::string::npos)
 		{

@@ -47,6 +47,7 @@ class Server
 		static void eraseMember(std::string channel, std::string nick);
 		static int retChannel(std::string channel);
 		static int retClient(std::string client);
+		static int retChannelMember(std::string client, int index);
 		static std::string concatenateClients(Channel& vec);
 };
 

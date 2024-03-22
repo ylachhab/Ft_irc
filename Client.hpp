@@ -55,7 +55,7 @@ class Client
 		void setFd(int fd);
 		void setPassword(const std::string& pass);
 		void setClientIp(std::string ip);
-
+		void setNickName(const std::string& nickname);
 		// //-------------Getter--------------
 		std::string getPassword() const;
 		std::string getNickName() const;
@@ -64,6 +64,7 @@ class Client
 		int getFd() const;
 		//---------------Commands Utils---------------
 		void sendClients(std::string msg, std::string channel);
+		void sendToAll(std::string msg, std::string channel);
 		void sendTo(std::string msg);
 		bool isInvited(std::string channel);
 		//---------------
