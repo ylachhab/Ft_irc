@@ -68,10 +68,19 @@ void Client::addNewChannel(std::string channelName)
 	channel.setOperator(this->_fd, this->getNickName());
 	channel.getChannel().push_back(*this);
 	Server::_channels.push_back(channel);
+	sendTo(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp));
+	sendTo(RPL_NAMREPLY(Server::_hostname, "@" + this->_nickName, "#" + channelName,  this->_nickName));
+	sendTo(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
 }
 
 void Client::addToExistChannel(int index, std::string channelName)
 {
+	if (Server::_channels[index].getChannel().size() == 0)
+	{
+		Server::_channels.erase(Server::_channels.begin() + index);
+		addNewChannel(channelName);
+		return;
+	}
 	Server::_channels[index].getChannel().push_back(*this);
 	std::string clients = Server::concatenateClients(Server::_channels[index]);
 	if (!Server::_channels[index].getChannelTopic().empty())
@@ -143,12 +152,7 @@ void Client::executeJoin()
 							addToExistChannel(index, channelName);
 					}
 					else if (index == -1)
-					{
 						addNewChannel(channelName);
-						sendTo(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp));
-						sendTo(RPL_NAMREPLY(Server::_hostname, "@" + this->_nickName, "#" + channelName,  this->_nickName));
-						sendTo(RPL_ENDOFNAMES(Server::_hostname, this->_nickName, "#" + channelName));
-					}
 				}
 				else
 					sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, it->first, this->_nickName));
