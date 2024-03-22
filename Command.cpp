@@ -55,13 +55,19 @@ void Client::Kick() {
 		return ;
 	}
 	Server::eraseMember(vec[0], vec[1]);
+	int Cfd = Server::retFd(vec[1]);
+	Server::_channels[Server::retChannel(vec[0])].getOperator().erase(Cfd);
 	if (vec.size() > 3) {
-		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK "
-			+ str + " " + vec[1] + " :" + vec[vec.size() - 1] + "\r\n", vec[0]);
+		std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK "
+			+ str + " " + vec[1] + " :" + vec[vec.size() - 1] + "\r\n";
+		sendClients(msg, vec[0]);
+		send(Cfd, msg.c_str(), msg.length(), 0);
 	}
 	else {
-		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK "
-			+ str + " " + vec[1] + " :" + vec[1] + "\r\n", vec[0]);
+		std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK "
+			+ str + " " + vec[1] + " :" + vec[1] + "\r\n";
+		sendClients(msg, vec[0]);
+		send(Cfd, msg.c_str(), msg.length(), 0);
 	}
 }
 
@@ -82,7 +88,7 @@ void Client::Invite() {
 	}
 	if (vec.size() < 2)
 	{
-		sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+		sendTo(":" + Server::_hostname + " 347 " + this->_nickName + " :End of Invite List\r\n");
 		return;
 	}
 	if (!Server::existeNick(vec[0]))
@@ -125,6 +131,11 @@ void Client::Topic() {
 	{
 		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 		return ;
+	}
+	if (vec.size() < 2)
+	{
+		sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+		return;
 	}
 	std::string str = vec[0];
 	if (str[0] == '#' && str.length() > 1)

@@ -6,6 +6,11 @@ bool Client::checkError() {
 		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 		return true ;
 	}
+	if (vec.empty())
+	{
+		sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
+		return true ;
+	}
 	std::string str = vec[0];
 	if (str[0] == '#' && str.length() > 1)
 		vec[0] = vec[0].substr(1);
