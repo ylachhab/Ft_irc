@@ -251,7 +251,7 @@ Server::Server(std::string port, std::string password) {
 					}
 				}
 				else {
-					cObjs[i - 1].RecvClient(pfds[i], sockfd, flag);
+					cObjs[i - 1].RecvClient(pfds[i], flag);
 					if (flag)
 					{
 						flag = false;

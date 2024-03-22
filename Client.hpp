@@ -47,7 +47,7 @@ class Client
 		~Client();
 
 		//Parce and execute Command
-		void RecvClient(pollfd& pfd, int sockfd, bool &flag);
+		void RecvClient(pollfd& pfd, bool &flag);
 		void parceCommand();
 		std::string to_Upper(std::string str);
 
