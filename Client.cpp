@@ -204,11 +204,10 @@ void Client::RecvClient(pollfd& pfd, bool &flag) {
 	char buf[512];
 	std::memset(&buf, 0, sizeof buf);
 	int nbyte = recv(pfd.fd, buf, sizeof buf, 0);
-	buffer.append(buf);
-	int clientFd = pfd.fd; 
+	buffer.append(buf); 
 	if (nbyte <= 0) {
 		if (nbyte == 0)
-			std::cout << "pollserver: socket " << clientFd <<" hung up\n";
+			std::cout << "pollserver: socket " << this->_fd <<" hung up\n";
 		else
 			std::cout << "Error in recv\n";
 		close(pfd.fd);

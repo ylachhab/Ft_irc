@@ -30,6 +30,13 @@ Server::~Server()
 {
 }
 
+std::string toUpper(std::string str)
+{
+	for (size_t i = 0; i < str.size(); i++)
+		str[i] = toupper(str[i]);
+	return str;
+}
+
 bool Server::existeNick( std::string nickName) {
 	for (size_t i = 0; i < cObjs.size(); i++)
 	{
@@ -51,7 +58,7 @@ int Server::retFd( std::string nickName) {
 bool Server::isMember(std::string channel, std::string nickName) {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
-		if (_channels[i].getChannelName() == channel)
+		if (toUpper(_channels[i].getChannelName()) == toUpper(channel))
 		{
 			if (_channels[i].isAMember(nickName))
 				return true;
@@ -65,7 +72,7 @@ bool Server::isMember(std::string channel, std::string nickName) {
 bool Server::findChannel(std::string channel) {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
-		if (_channels[i].getChannelName() == channel)
+		if (toUpper(_channels[i].getChannelName()) == toUpper(channel))
 			return true;
 	}
 	return false;
@@ -74,7 +81,7 @@ bool Server::findChannel(std::string channel) {
 int Server::retChannel(std::string channel) {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
-		if (_channels[i].getChannelName() == channel)
+		if (toUpper(_channels[i].getChannelName()) == toUpper(channel))
 			return i;
 	}
 	return -1;
@@ -92,7 +99,7 @@ int Server::retClient(std::string client) {
 int Server::findOperator(std::string channel, std::string nick) {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
-		if (_channels[i].getChannelName() == channel)
+		if (toUpper(_channels[i].getChannelName()) == toUpper(channel))
 		{
 			if(_channels[i].isOperator(nick) == -1)
 				return -1;
@@ -105,7 +112,7 @@ int Server::findOperator(std::string channel, std::string nick) {
 void Server::eraseMember(std::string channel, std::string nick) {
 	for (size_t i = 0; i < _channels.size(); i++)
 	{
-		if (_channels[i].getChannelName() == channel)
+		if (toUpper(_channels[i].getChannelName()) == toUpper(channel))
 			_channels[i].eraseMember(nick);
 	}
 }
