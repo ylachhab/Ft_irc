@@ -209,7 +209,6 @@ void Client::RecvClient(pollfd& pfd, bool &flag) {
 	char buf[513];
 	std::memset(buf, 0, sizeof buf);
 	int nbyte = recv(pfd.fd, buf, sizeof buf - 1, 0);
-	buffer.clear();
 	buffer.append(buf);
 	if (nbyte <= 0) {
 		if (nbyte == 0)
@@ -227,4 +226,5 @@ void Client::RecvClient(pollfd& pfd, bool &flag) {
 		}
 		parceCommand();
 	}
+	buffer.clear();
 }

@@ -8,5 +8,10 @@ int main(int ac, char **av) {
 	}
 	std::string port = av[1];
 	std::string password = av[2];
+	if (password.empty())
+	{
+		std::cout << "Error empty password" << std::endl;
+		std::exit(1);
+	}
 	Server obj(port, password);
 }

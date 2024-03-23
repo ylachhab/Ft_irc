@@ -25,7 +25,7 @@ void Client::nicknameSet(bool flag)
 	{
 		for (size_t i = 0; i < Server::cObjs.size(); i++)
 		{
-			if (Server::cObjs[i].getFd() != this->_fd
+			if (Server::cObjs[i].getFd() != this->_fd && this->_nickName == "*"
 				&& Server::cObjs[i]._nickName == this->_nickName && !Server::cObjs[i]._registred)
 			{
 				std::string msg = "ERROR :Closing Link: ss by tngnet.nl.quakenet.org (Overridden by other sign on)\r\n";
