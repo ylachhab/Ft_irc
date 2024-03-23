@@ -187,11 +187,6 @@ int Server::get_socket() {
 			std::cout << "Error in setsockopt" << std::endl;
 			std::exit(1);
 		}
-		if (setsockopt(socfd, SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof(int))== -1)
-		{
-			std::cout << "Error in setsockopt" << std::endl;
-			std::exit(1);
-		}
 		if (bind(socfd, p->ai_addr, p->ai_addrlen) < 0)
 		{
 			close (socfd);
