@@ -206,9 +206,9 @@ void Client::parceCommand() {
 
 void Client::RecvClient(pollfd& pfd, bool &flag) {
 	error = false;
-	char buf[512];
+	char buf[513];
 	std::memset(&buf, 0, sizeof buf);
-	int nbyte = recv(pfd.fd, buf, sizeof buf, 0);
+	int nbyte = recv(pfd.fd, buf, sizeof buf - 1, 0);
 	buffer.append(buf);
 	if (nbyte <= 0) {
 		if (nbyte == 0)
