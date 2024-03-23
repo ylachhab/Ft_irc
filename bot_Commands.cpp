@@ -101,12 +101,7 @@ void Client::executeBot()
 			else if ((j = Server::retClient(vec[0])) != -1)
 				executeBotClient(Server::cObjs[j]);
 			else
-			{
-				if (vec[vec.size() - 1].empty())
-					sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
-				else
-					sendClients(vec[vec.size() - 1] + "\r\n", "");
-			}
+				sendTo(Server::_hostname + " 401 " + this->_nickName + " " + vec[0] + " :No such nick\r\n");
 		}
 		else
 			sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
@@ -114,3 +109,4 @@ void Client::executeBot()
 	else
 		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }
+

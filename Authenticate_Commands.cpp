@@ -100,6 +100,7 @@ void Client::executeNick()
 			if (specialCharacter(vec[0]) == 0)
 			{
 				this->_nick = true;
+				vec[0] = vec[0].substr(0, 15);
 				if (!this->_registred)
 					this->_nickName = vec[0];
 				else
@@ -110,13 +111,13 @@ void Client::executeNick()
 						if (Server::isMember(Server::_channels[i].getChannelName(), this->_nickName))
 						{
 							sendToAll(msg, Server::_channels[i].getChannelName());
-							int index = Server::retChannelMember(this->_nickName, i);
-							Server::_channels[i].getChannel()[index].setNickName(vec[0]);
-							if (Server::_channels[i].isOperator(this->_nickName))
+							if (Server::_channels[i].isOperator(this->_nickName) != -1)
 							{
 								Server::_channels[i].getOperator().erase(this->_fd);
 								Server::_channels[i].setOperator(this->_fd, vec[0]);
 							}
+							int index = Server::retChannelMember(this->_nickName, i);
+							Server::_channels[i].getChannel()[index].setNickName(vec[0]);
 						}
 					}
 					sendTo(msg);
@@ -143,6 +144,8 @@ void Client::executeUser()
 	{
 		if (vec.size() >= 4)
 		{
+			vec[0] = vec[0].substr(0, 10);
+			vec[3] = vec[3].substr(0, 20);
 			nicknameSet(this->_nick);
 			this->_userName = vec[0];
 			this->_realName = vec[3];
@@ -163,6 +166,11 @@ void Client::executeQuit()
 	close(this->_fd);
 	for (size_t j = 0; j < Server::_channels.size(); j++)
 	{
+		if (Server::_channels[j].isAMember(this->_nickName))
+		{
+			std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " QUIT " + ":Quit\r\n";
+			sendToAll(msg, Server::_channels[j].getChannelName());
+		}
 		Server::_channels[j].eraseMember(this->_nickName);
 		Server::_channels[j].eraseOperator(this->_fd);
 	}
