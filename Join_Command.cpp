@@ -63,6 +63,11 @@ int Client::existChannel(std::string channelName)
 
 void Client::addNewChannel(std::string channelName)
 {
+	if (channelName.size() >= 512)
+	{
+		sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, "#" + channelName , this->_nickName));
+		return;
+	}
 	Channel channel;
 	channel.setChannelName(channelName);
 	channel.setOperator(this->_fd, this->getNickName());

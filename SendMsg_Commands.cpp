@@ -81,15 +81,12 @@ void Client::executePrivMsg()
 			int index = Server::retClient(member.vec_clients[i]);
 			if (index != -1)
 			{
-				if (Server::cObjs[index]._nickName != this->_nickName)
+				if (vec[vec.size() - 1].empty())
+					sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+				else
 				{
-					if (vec[vec.size() - 1].empty())
-						sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
-					else
-					{
-						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + Server::cObjs[index].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
-						send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
-					}
+					std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + Server::cObjs[index].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
+					send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
 				}
 			}
 			else
@@ -152,15 +149,12 @@ void Client::executeNotice()
 			int index = Server::retClient(member.vec_clients[i]);
 			if (index != -1)
 			{
-				if (Server::cObjs[index]._nickName != this->_nickName)
+				if (vec[vec.size() - 1].empty())
+					sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+				else
 				{
-					if (vec[vec.size() - 1].empty())
-						sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
-					else
-					{
-						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NOTICE " + this->_nickName + " :" + vec[vec.size() - 1] + "\r\n";
-						send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
-					}
+					std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NOTICE " + this->_nickName + " :" + vec[vec.size() - 1] + "\r\n";
+					send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
 				}
 			}
 		}
