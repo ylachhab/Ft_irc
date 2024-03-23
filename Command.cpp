@@ -88,7 +88,7 @@ void Client::Invite() {
 	}
 	if (vec.size() < 2)
 	{
-		sendTo(":" + Server::_hostname + " 347 " + this->_nickName + " :End of Invite List\r\n");
+		sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
 		return;
 	}
 	if (!Server::existeNick(vec[0]))
@@ -132,11 +132,6 @@ void Client::Topic() {
 		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 		return ;
 	}
-	if (vec.size() < 2)
-	{
-		sendTo(ERR_NEEDMOREPARAMS(this->_nickName, Server::_hostname));
-		return;
-	}
 	std::string str = vec[0];
 	if (str[0] == '#' && str.length() > 1)
 		vec[0] = vec[0].substr(1);
@@ -161,6 +156,6 @@ void Client::Topic() {
 		return ;
 	}
 	Server::_channels[index].setChannelTopic(vec[vec.size() - 1]);
-	sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " TOPIC " + str + " :"
-		+ Server::_channels[index].getChannelTopic() + "\r\n");
+	sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " TOPIC " + str + " :"
+		+ Server::_channels[index].getChannelTopic() + "\r\n", vec[0]);
 }

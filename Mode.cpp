@@ -52,17 +52,17 @@ void Client::checkFlag(std::string channel) {
 	}
 	if (Server::_channels[i]._channelMode._limit && Server::_channels[i]._channelMode._key)
 	{
-		std::stringstream ss(Server::_channels[i].getlimitMbr());
-		std::string lim;
-		ss >> lim;
+		std::stringstream ss;
+		ss << Server::_channels[i].getlimitMbr();
+		std::string lim = ss.str();
 		sendTo(":" + Server::_hostname + " 324 " + this->_nickName + " #" + channel + " +" + sub + " " + lim + " "
 			+ Server::_channels[i].getKey() + "\r\n");
 	}
 	else if (Server::_channels[i]._channelMode._limit)
 	{
-		std::stringstream ss(Server::_channels[i].getlimitMbr());
-		std::string lim;
-		ss >> lim;
+		std::stringstream ss;
+		ss << Server::_channels[i].getlimitMbr();
+		std::string lim = ss.str();
 		sendTo(":" + Server::_hostname + " 324 " + this->_nickName + " #" + channel + " +" + sub + " " + lim + "\r\n");
 	}
 	else if (Server::_channels[i]._channelMode._key)
@@ -76,14 +76,12 @@ void Client::checkTopic(char sign, int index, std::string channel) {
 	if (!Server::_channels[index]._channelMode._topic && sign == '+')
 	{
 		Server::_channels[index]._channelMode._topic = true;
-		sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +t" + "\r\n");
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
 			+ channel + " +t" + "\r\n", channel.substr(1));
 	}
 	if (Server::_channels[index]._channelMode._topic && sign == '-')
 	{
 		Server::_channels[index]._channelMode._topic = false;
-		sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -t" + "\r\n");
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
 			+ channel + " -t" + "\r\n", channel.substr(1));
 	}
@@ -125,18 +123,21 @@ void Client::checkKeyFlag(char sign, int index, std::string channel, std::string
 	if (sign == '+' && !Server::_channels[index]._channelMode._key) {
 		Server::_channels[index]._channelMode._key = true;
 		Server::_channels[index].setKey(arg);
-		sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +k " + arg + "\r\n");
+		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " +k "
+			+ arg + "\r\n", channel.substr(1));
 	}
 	else if (sign == '-' && Server::_channels[index]._channelMode._key
 		&& Server::_channels[index].getKey() == arg) {
 		Server::_channels[index]._channelMode._key = false;
 		Server::_channels[index].setKey("");
-		sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -k " + arg + "\r\n");
+		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + channel + " -k "
+			+ arg + "\r\n", channel.substr(1));
 	}
 	else if ((sign == '+' && Server::_channels[index]._channelMode._key)
 		|| (sign == '-' && !Server::_channels[index]._channelMode._key)
 		|| (Server::_channels[index].getKey() != arg))
-		sendTo(":" + Server::_hostname + " 467 " + this->_nickName + " " + channel + " :Channel key already set\r\n");
+		sendClients(":" + Server::_hostname + " 467 " + this->_nickName + " " + channel + " :Channel key already set\r\n"
+			, channel.substr(1));
 }
 
 bool isNbr(std::string str)
@@ -194,14 +195,16 @@ void Client::Mode() {
 						if (!isNbr(vec[i + 1]) && !Server::_channels[index]._channelMode._limit && atoi(vec[i + 1].c_str()) > 0) {
 							Server::_channels[index].setlimitMbr(atoi(vec[i + 1].c_str()));
 							Server::_channels[index]._channelMode._limit = true;
-							sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + str + " +l " + vec[i + 1] + "\r\n");
+							sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + str + " +l "
+							+ vec[i + 1] + "\r\n", vec[0]);
 						}
 						vec.erase(vec.begin() + i + 1);
 					}
 					if (sign == '-' && Server::_channels[index]._channelMode._limit) {
 						Server::_channels[index].setlimitMbr(0);
 						Server::_channels[index]._channelMode._limit = false;
-						sendTo(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp +  " MODE " + str + " -l " + "\r\n");
+						sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp +  " MODE " + str + " -l " + "\r\n"
+						, vec[0]);
 					}
 					break;
 				case  'k':

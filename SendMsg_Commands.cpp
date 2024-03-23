@@ -24,6 +24,7 @@ t_members splitMembers(std::string& members)
 }
 
 /****************** PRIVMSG Command *******************/
+
 void Client::executePrivMsg()
 {
 	if (this->_registred)
@@ -100,8 +101,8 @@ void Client::executePrivMsg()
 		sendTo(ERR_NOTREGISTERED(this->_nickName, Server::_hostname));
 }
 
-
 /****************** NOTICE Command *******************/
+
 void Client::executeNotice()
 {
 	if (this->_registred)
