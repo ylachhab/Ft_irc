@@ -174,7 +174,5 @@ void Client::executeQuit()
 		Server::_channels[j].eraseMember(this->_nickName);
 		Server::_channels[j].eraseOperator(this->_fd);
 	}
-	int i = Server::retClient(this->_nickName);
-	Server::cObjs.erase(Server::cObjs.begin() + i);
-	Server::pfds.erase(Server::pfds.begin() + i + 1);
+	error = true;
 }

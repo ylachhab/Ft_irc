@@ -105,7 +105,7 @@ void Client::parceCommand() {
 	size_t found = 0;
 	while ((found = buffer.find("\n", found)) != std::string::npos)
 	{
-		if (buffer[found - 1] != '\r')
+		if (found == 0 || buffer[found - 1] != '\r')
 		{
 			buffer.insert(found, "\r");
 			found += 1;
