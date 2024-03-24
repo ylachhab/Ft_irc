@@ -91,7 +91,7 @@ void Client::executePrivMsg()
 				}
 			}
 			else
-				sendTo(Server::_hostname + " 401 " + this->_nickName + " " + member.vec_clients[i] + " :No such nick\r\n");
+				sendTo(":" + Server::_hostname + " 401 " + this->_nickName + " " + member.vec_clients[i] + " :No such nick\r\n");
 		}
 	}
 	else

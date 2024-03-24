@@ -56,7 +56,9 @@ void Client::Kick() {
 	}
 	Server::eraseMember(vec[0], vec[1]);
 	int Cfd = Server::retFd(vec[1]);
-	Server::_channels[Server::retChannel(vec[0])].getOperator().erase(Cfd);
+	Server::_channels[Server::retChannel(vec[0])].eraseOperator(Cfd);
+    if (Server::_channels[Server::retChannel(vec[0])].getChannel().empty())
+        Server::_channels.erase(Server::_channels.begin() + Server::retChannel(vec[0]));
 	if (vec.size() > 3) {
 		std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " KICK "
 			+ str + " " + vec[1] + " :" + vec[vec.size() - 1] + "\r\n";

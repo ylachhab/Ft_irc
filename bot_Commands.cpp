@@ -24,8 +24,8 @@ void Client::executeBotClient(Client &client)
 	sendTo(std::string(BLUE) + "Username : " + std::string(RESET) + "" + client.getUserName() + "\r\n");
 	sendTo(std::string(BLUE) + "realName : " + std::string(RESET) + "" + client.getRealName() + "\r\n");
 	sendTo(std::string(BLUE) + "----------------------------" + std::string(RESET) + "\r\n");
-	sendTo(std::string(CYAN)+ "Channels : " + std::string(RESET) + "\r\n");
-	sendTo(std::string(CYAN)+ "----------------------------" + std::string(RESET) + "\r\n");
+	sendTo(std::string(CYAN) + "Channels : " + std::string(RESET) + "\r\n");
+	sendTo(std::string(CYAN) + "----------------------------" + std::string(RESET) + "\r\n");
 	for (size_t i = 0; i < Server::_channels.size(); i++)
 	{
 		if (Server::_channels[i].isAMember(client.getNickName()))
