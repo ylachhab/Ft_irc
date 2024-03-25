@@ -88,9 +88,9 @@ void Client::addToExistChannel(int index, std::string channelName)
 	}
 	Server::_channels[index].getChannel().push_back(*this);
 	std::string clients = Server::concatenateClients(Server::_channels[index]);
+	sendTo(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp));
 	if (!Server::_channels[index].getChannelTopic().empty())
 		sendTo(RPL_TOPIC(this->_nickName, Server::_hostname, "#" + channelName, Server::_channels[index].getChannelTopic()));
-	sendTo(RPL_JOIN(this->_nickName, this->_userName, "#" + channelName, this->clientIp));
 	std::string msg = RPL_NAMREPLY(Server::_hostname, clients, "#" + channelName, this->_nickName);
 	if (msg.length() <= 512)
 		sendTo(msg + "\r\n");
