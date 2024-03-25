@@ -79,19 +79,24 @@ void Client::executePrivMsg()
 		}
 		for (size_t i = 0; i < member.vec_clients.size(); i++)
 		{
-			int index = Server::retClient(member.vec_clients[i]);
-			if (index != -1)
-			{
-				if (vec[vec.size() - 1].empty())
-					sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
-				else
-				{
-					std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + Server::cObjs[index].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
-					send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
-				}
-			}
+			if (to_Upper(member.vec_clients[i]) == "BOT" && Server::botSet != -1)
+				executeBot();
 			else
-				sendTo(":" + Server::_hostname + " 401 " + this->_nickName + " " + member.vec_clients[i] + " :No such nick\r\n");
+			{
+				int index = Server::retClient(member.vec_clients[i]);
+				if (index != -1)
+				{
+					if (vec[vec.size() - 1].empty())
+						sendTo(ERR_NOTEXTTOSEND(Server::_hostname, this->_nickName));
+					else
+					{
+						std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " PRIVMSG " + Server::cObjs[index].getNickName() + " :" + vec[vec.size() - 1] + "\r\n";
+						send(Server::cObjs[index].getFd(), msg.c_str(), msg.length(), 0);
+					}
+				}
+				else
+					sendTo(":" + Server::_hostname + " 401 " + this->_nickName + " " + member.vec_clients[i] + " :No such nick\r\n");
+			}
 		}
 	}
 	else

@@ -31,6 +31,7 @@ class Server
 		static std::vector <Channel > _channels;
 		static std::string _hostname;
 		static std::string _ipaddress;
+		static int botSet;
 		Server();
 		Server(std::string port, std::string password);
 		Server(const Server& obj);

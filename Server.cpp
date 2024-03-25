@@ -4,7 +4,7 @@ std::vector <pollfd > Server::pfds;
 std::vector <Client > Server::cObjs;
 std::vector <Channel > Server::_channels;
 std::string Server::_hostname = "FT_IRC.1337.ma";
-
+int Server::botSet = -1;
 
 Server::Server()
 {
@@ -288,6 +288,7 @@ Server::Server(std::string port, std::string password) {
 							Server::_channels[j].eraseMember(cObjs[i - 1].getNickName());
 							Server::_channels[j].eraseOperator(cObjs[i - 1].getFd());
 						}
+						botSet = -1;
 						pfds.erase(pfds.begin() + i);
 						cObjs.erase(cObjs.begin() + (i - 1));
 					}

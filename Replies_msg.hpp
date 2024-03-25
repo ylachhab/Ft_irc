@@ -43,4 +43,7 @@
 #define ERR_UNKNOWNMODE(nick, hostname, channel, character) ":" + hostname + " 472 " + nick + " " + channel + " " + character + " :is unknown mode char to me\r\n"
 #define ERR_UNKNOWNCOMMAND(nick, hostname, command) ":" + hostname + " 421 " + nick + " " + command + " :Unknown command\r\n"
 
+#define RPL_BOT(nick, username, clientIp, clientnick, msg) ":" + nick + "!~" + username + "@" + clientIp + " NOTICE " + clientnick + " :" + msg + "\r\n"
+#define ERR_BOT(hostname, nick) ":" + hostname + " 450 " + nick + " bot is already set" + "\r\n"
+
 #endif

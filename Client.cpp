@@ -188,7 +188,7 @@ void Client::parceCommand() {
 		else if (to_Upper(cmd) == "QUIT")
 			executeQuit();
 		else if (to_Upper(cmd) == "BOT")
-			executeBot();
+			Bot();
 		else if (to_Upper(cmd) == "PONG" || cmd == Server::_hostname) {
 			vec.clear();
 			continue;

@@ -85,6 +85,7 @@ class Client
 		void isRegesterd();
 		void executeBotClient(Client &client);
 		void executeBotChannel();
+		void executeBot();
 		//----------------Command---------------
 		void executePass();
 		void executeNick();
@@ -93,7 +94,7 @@ class Client
 		void executePrivMsg();
 		void executeNotice();
 		void executeQuit();
-		void executeBot();
+		void Bot();
 		void Topic();
 		void Mode();
 		void Kick();
