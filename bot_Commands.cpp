@@ -1,10 +1,5 @@
 #include "Client.hpp"
 
-#define RESET   "\033[0m"
-#define RED     "\033[31m"
-#define BLUE    "\033[34m"
-#define CYAN    "\033[36m"
-
 std::vector<std::string> splitMsg(std::string str)
 {
 	std::stringstream split_clients(str);
@@ -75,9 +70,6 @@ void Client::executeBotChannel()
 						sendTo(RPL_BOT(this->_nickName, this->_userName, this->clientIp, this->_nickName,"- " + vec_clients[i].getNickName()));
 				}
 				sendTo (RPL_BOT(this->_nickName, this->_userName, this->clientIp, this->_nickName,"----------------------------"));
-				// }
-				// else
-				// 	sendTo(ERR_USERNOTINCHANNEL(Server::_hostname, Server::_channels[index].getChannelName()));
 			}
 			else
 				sendTo(ERR_NOSUCHCHANNEL(Server::_hostname, tmpVec[i], this->_nickName));

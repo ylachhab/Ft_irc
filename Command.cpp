@@ -76,7 +76,7 @@ void Client::Kick() {
 bool Client::isInvited(std::string channel) {
 	for (size_t i = 0; i < channelInvite.size(); i++)
 	{
-		if (channelInvite[i] == channel)
+		if (to_Upper(channelInvite[i]) == to_Upper(channel))
 			return true;
 	}
 	return  false;
@@ -123,7 +123,7 @@ void Client::Invite() {
 		int i = Server::retClient(vec[0]);
 		Server::cObjs[i].channelInvite.push_back(vec[1]);
 	}
-	sendTo(":" + Server::_hostname + " 341 " + this->_nickName + " " + vec[0] + " " + vec[1]+ "\r\n");
+	sendTo(":" + Server::_hostname + " 341 " + this->_nickName + " " + vec[0] + " " + str+ "\r\n");
 	sendClient(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " INVITE "
 		+ vec[0] + " " + str + "\r\n", Server::retFd(vec[0]));
 }

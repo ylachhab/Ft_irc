@@ -50,6 +50,15 @@ std::string Client::removeExtraChar(const std::string& input, char del) {
 	return result;
 }
 
+int Client::retInviteChan(std::string channel) {
+	for (size_t i = 0; i < channelInvite.size(); i++)
+	{
+		if (to_Upper(channelInvite[i]) == to_Upper(channel))
+			return i;
+	}
+	return 0;
+}
+
 /******************* JOIN Command **********************/
 int Client::existChannel(std::string channelName)
 {
@@ -139,7 +148,11 @@ void Client::executeJoin()
 						if (Server::_channels[index]._channelMode._inviteOnly)
 						{
 							if(isInvited(Server::_channels[index].getChannelName()))
+							{
+								int c = retInviteChan(Server::_channels[index].getChannelName());
+								channelInvite.erase(channelInvite.begin() + c);
 								addToExistChannel(index, channelName);
+							}
 							else
 								sendTo(ERR_INVITEONLY(this->_nickName, it->first));
 						}

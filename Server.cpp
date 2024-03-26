@@ -287,6 +287,8 @@ Server::Server(std::string port, std::string password) {
 						{
 							Server::_channels[j].eraseMember(cObjs[i - 1].getNickName());
 							Server::_channels[j].eraseOperator(cObjs[i - 1].getFd());
+							if (Server::_channels[j].getChannel().empty())
+								Server::_channels.erase(Server::_channels.begin() + j);
 						}
 						botSet = -1;
 						pfds.erase(pfds.begin() + i);
