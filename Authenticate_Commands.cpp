@@ -19,24 +19,6 @@ bool specialCharacter(std::string &str)
 	return false;
 }
 
-void Client::nicknameSet(bool flag)
-{
-	if (flag)
-	{
-		for (size_t i = 0; i < Server::cObjs.size(); i++)
-		{
-			if (Server::cObjs[i].getFd() != this->_fd && this->_nickName != "*"
-				&& Server::cObjs[i]._nickName == this->_nickName && !Server::cObjs[i]._registred)
-			{
-				std::string msg = "ERROR :Closing Link: ss by tngnet.nl.quakenet.org (Overridden by other sign on)\r\n";
-				send(Server::cObjs[i].getFd(), msg.c_str(), msg.length(), 0);
-				close(Server::cObjs[i].getFd());
-				error = true;
-			}
-		}
-	}
-}
-
 void Client::isRegesterd()
 {
 	if (this->_nick && this->_user && !this->_registred)
@@ -86,11 +68,10 @@ void Client::executeNick()
 {
 	if (this->_pass && this->_authenticated)
 	{
-		nicknameSet(this->_user);
 		for (size_t i = 0; i < Server::cObjs.size(); i++)
 		{
 			if (Server::cObjs[i].getFd() != this->_fd
-				&& Server::cObjs[i]._nickName == vec[0] && Server::cObjs[i]._registred)
+				&& Server::cObjs[i]._nickName == vec[0])
 			{
 				sendTo(ERR_NICKNAMEINUSE(this->_nickName, Server::_hostname));
 				return ;
@@ -147,7 +128,6 @@ void Client::executeUser()
 		{
 			vec[0] = vec[0].substr(0, 10);
 			vec[3] = vec[3].substr(0, 20);
-			nicknameSet(this->_nick);
 			this->_userName = vec[0];
 			this->_realName = vec[3];
 			this->_user = true;

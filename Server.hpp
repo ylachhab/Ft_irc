@@ -37,6 +37,7 @@ class Server
 		Server(const Server& obj);
 		Server& operator=(const Server& obj);
 		~Server();
+		void closeFd();
 		int get_socket();
 		void addToPfds(int newfd);
 		void deletePfds(int i);

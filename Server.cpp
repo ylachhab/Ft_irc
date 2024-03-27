@@ -185,11 +185,13 @@ int Server::get_socket() {
 		if (setsockopt(socfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))== -1)
 		{
 			std::cout << "Error in setsockopt" << std::endl;
+			close (socfd);
 			std::exit(1);
 		}
 		if (setsockopt(socfd, SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof(int))== -1)
 		{
 			std::cout << "Error in setsockopt" << std::endl;
+			close (socfd);
 			std::exit(1);
 		}
 		if (bind(socfd, p->ai_addr, p->ai_addrlen) < 0)
@@ -222,6 +224,11 @@ void Server::deletePfds(int i){
 	pfds.erase(pfds.begin() +i);
 }
 
+void Server::closeFd() {
+	for (size_t i = 0; i < pfds.size(); i++)
+		close(pfds[i].fd);
+}
+
 Server::Server(std::string port, std::string password) {
 	if (isNumber(port) || port.empty())
 	{
@@ -234,6 +241,7 @@ Server::Server(std::string port, std::string password) {
 	if (sockfd == -1)
 	{
 		std::cout << "Error getting listening socket" << std::endl;
+		close(sockfd);
 		std::exit(1);
 	}
 	addToPfds(sockfd);
@@ -246,9 +254,9 @@ Server::Server(std::string port, std::string password) {
 		if (pcount == -1)
 		{
 			std::cout << "Error in poll" << std::endl;
+			closeFd();
 			std::exit(1);
 		}
-
 		for (size_t i = 0; i < pfds.size(); i++)
 		{
 			if (pfds[i].revents & POLLIN)
@@ -259,6 +267,7 @@ Server::Server(std::string port, std::string password) {
 					if (newFd == -1)
 					{
 						std::cout << "Error in accept" << std::endl;
+						closeFd();
 						std::exit(1);
 					}
 					else {
