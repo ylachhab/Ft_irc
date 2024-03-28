@@ -183,7 +183,14 @@ void Client::executeJoin()
 								sendTo(ERR_BADCHANNELKEY(this->_nickName, Server::_hostname, it->first));
 						}
 						else if (Server::_channels[index]._channelMode.IKLoff())
+						{
 							addToExistChannel(index, channelName);
+							if(isInvited(Server::_channels[index].getChannelName()))
+							{
+								int c = retInviteChan(Server::_channels[index].getChannelName());
+								channelInvite.erase(channelInvite.begin() + c);
+							}
+						}
 					}
 					else if (index == -1)
 						addNewChannel(channelName);

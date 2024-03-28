@@ -68,23 +68,28 @@ void Client::executeNick()
 {
 	if (this->_pass && this->_authenticated)
 	{
-		for (size_t i = 0; i < Server::cObjs.size(); i++)
-		{
-			if (Server::cObjs[i].getFd() != this->_fd
-				&& Server::cObjs[i]._nickName == vec[0])
-			{
-				sendTo(ERR_NICKNAMEINUSE(this->_nickName, Server::_hostname));
-				return ;
-			}
-		}
 		if (vec.size() && !vec[0].empty())
 		{
 			if (specialCharacter(vec[0]) == 0)
 			{
+				for (size_t i = 0; i < Server::cObjs.size(); i++)
+				{
+					if (Server::cObjs[i].getFd() != this->_fd
+						&& Server::cObjs[i]._nickName == vec[0])
+					{
+						sendTo(ERR_NICKNAMEINUSE(vec[0], this->_nickName, Server::_hostname));
+						this->_nick = false;
+						return ;
+					}
+				}
 				this->_nick = true;
 				vec[0] = vec[0].substr(0, 15);
 				if (!this->_registred)
+				{
+					if(this->_nickName != "*")
+						sendTo(":" + this->_nickName + "!" + this->_userName + "@" + " NICK " + ":" + vec[0] + "\r\n");
 					this->_nickName = vec[0];
+				}
 				else
 				{
 					std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " NICK " + ":" + vec[0] + "\r\n";
