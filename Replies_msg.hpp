@@ -18,9 +18,9 @@
 #define ERR_ALREADYREGISTERED(nick, hostname) ":" + hostname + " 462 " + nick + " :You may not reregister !\r\n"
 #define ERR_NEEDMOREPARAMS(nick, hostname) ":" + hostname + " 461 " + nick + " :Not enough parameters !\r\n"
 
-#define ERR_CHANNELISFULL(nick, channelName) ":" + nick + " 471 " + channelName + " :Cannot join channel, Channel is full (+l)\r\n"
+#define ERR_CHANNELISFULL(nick, hostname, channelName) ":" + hostname  + " 471 "  + nick + " " + channelName + " :Cannot join channel, Channel is full (+l)\r\n"
 #define ERR_BADCHANNELKEY(nick, hostname, channelName) ":" + hostname + " 475 " + nick + " " + channelName + " :Cannot join channel, you need the correct key (+K)\r\n"
-#define ERR_INVITEONLY(nick, channelName) ":" + nick + " 473 " + channelName + " :Cannot join channel, you must be invited (+i)\r\n"
+#define ERR_INVITEONLY(nick, hostname, channelName) ":" + hostname  + " 473 " + nick + " " + channelName + " :Cannot join channel, you must be invited (+i)\r\n"
 #define ERR_NORECIPIENT(nick, hostname, command) ":" + hostname + " 411 " + nick + " :No recipient given " + "(" + command + ")" + "\r\n"
 
 

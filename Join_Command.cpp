@@ -154,7 +154,7 @@ void Client::executeJoin()
 								addToExistChannel(index, channelName);
 							}
 							else
-								sendTo(ERR_INVITEONLY(this->_nickName, it->first));
+								sendTo(ERR_INVITEONLY(this->_nickName, Server::_hostname, it->first));
 						}
 						else if (Server::_channels[index]._channelMode._key && Server::_channels[index]._channelMode._limit)
 						{
@@ -166,14 +166,14 @@ void Client::executeJoin()
 									sendTo(ERR_BADCHANNELKEY(this->_nickName, Server::_hostname, it->first));
 							}
 							else
-								sendTo(ERR_CHANNELISFULL(this->_nickName, it->first));
+								sendTo(ERR_CHANNELISFULL(this->_nickName, Server::_hostname, it->first));
 						}
 						else if (Server::_channels[index]._channelMode._limit)
 						{
 							if (Server::_channels[index].getChannel().size() < static_cast<size_t>(Server::_channels[index].getlimitMbr()))
 								addToExistChannel(index, channelName);
 							else
-								sendTo(ERR_CHANNELISFULL(this->_nickName, it->first));
+								sendTo(ERR_CHANNELISFULL(this->_nickName, Server::_hostname, it->first));
 						}
 						else if (Server::_channels[index]._channelMode._key)
 						{
