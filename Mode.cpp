@@ -192,7 +192,7 @@ void Client::Mode() {
 					if (i + 1 >= vec.size() && sign == '+')
 						sendTo(":" + Server::_hostname + " 461 " + this->_nickName + " MODE " + " +l " + ":Not enough parameters\r\n");
 					if (i + 1 < vec.size() && sign == '+') {
-						if (!isNbr(vec[i + 1]) && !Server::_channels[index]._channelMode._limit && atoi(vec[i + 1].c_str()) > 0) {
+						if (!isNbr(vec[i + 1]) && atoi(vec[i + 1].c_str()) > 0) {
 							Server::_channels[index].setlimitMbr(atoi(vec[i + 1].c_str()));
 							Server::_channels[index]._channelMode._limit = true;
 							sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + str + " +l "
