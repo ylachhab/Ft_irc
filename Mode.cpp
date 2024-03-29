@@ -136,8 +136,7 @@ void Client::checkKeyFlag(char sign, int index, std::string channel, std::string
 	else if ((sign == '+' && Server::_channels[index]._channelMode._key)
 		|| (sign == '-' && !Server::_channels[index]._channelMode._key)
 		|| (Server::_channels[index].getKey() != arg))
-		sendClients(":" + Server::_hostname + " 467 " + this->_nickName + " " + channel + " :Channel key already set\r\n"
-			, channel.substr(1));
+		sendTo(":" + Server::_hostname + " 467 " + this->_nickName + " " + channel + " :Channel key already set\r\n");
 }
 
 bool isNbr(std::string str)
@@ -192,7 +191,7 @@ void Client::Mode() {
 					if (i + 1 >= vec.size() && sign == '+')
 						sendTo(":" + Server::_hostname + " 461 " + this->_nickName + " MODE " + " +l " + ":Not enough parameters\r\n");
 					if (i + 1 < vec.size() && sign == '+') {
-						if (!isNbr(vec[i + 1]) && atoi(vec[i + 1].c_str()) > 0) {
+						if (!isNbr(vec[i + 1]) && atol(vec[i + 1].c_str()) > 0 && atol(vec[i + 1].c_str()) <= 2147483647) {
 							Server::_channels[index].setlimitMbr(atoi(vec[i + 1].c_str()));
 							Server::_channels[index]._channelMode._limit = true;
 							sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE " + str + " +l "
@@ -208,12 +207,19 @@ void Client::Mode() {
 					}
 					break;
 				case  'k':
-					if (i + 1 < vec.size()) {
+					if (i + 1 < vec.size() && !vec[i + 1].empty() && vec[i + 1][0] != ' ' && vec[i + 1][0] != '\t') {
+						size_t start = vec[i + 1].find_first_of(" \t");
+						if (start != std::string::npos)
+							vec[i + 1] = vec[i + 1].substr(0, start);
 						checkKeyFlag(sign, index, str, vec[i + 1]);
 						vec.erase(vec.begin() + i + 1);
 					}
 					else
+					{
+						if (vec[i + 1][0] == ' ' || vec[i + 1][0] == '\t')
+							vec.erase(vec.begin() + i + 1);
 						sendTo(":" + Server::_hostname + " 461 " + this->_nickName + " MODE " + sign + "k " + ":Not enough parameters\r\n");
+					}
 					break;
 				default:
 					sendTo(ERR_UNKNOWNMODE(this->_nickName, Server::_hostname, str, vec[i][j]));
