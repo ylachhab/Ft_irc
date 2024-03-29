@@ -106,7 +106,7 @@ void Client::checkOperatorFlag(char sign, int index, std::string channel, std::s
 	if (!Server::existeNick(arg))
 		sendTo(ERR_NOSUCHNICK(Server::_hostname, channel, arg));
 	else if (!Server::isMember(vec[0], arg))
-		sendTo(ERR_USERNOTINCHANNEL(Server::_hostname, vec[0]));
+		sendTo(ERR_USERNOTINCHANNEL(Server::_hostname, arg));
 	else if (Server::findOperator(vec[0], arg) == -1 && sign == '+') {
 		Server::_channels[index].setOperator(Server::retFd(arg), arg);
 		sendClients(":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " MODE "
