@@ -145,7 +145,13 @@ void Client::executeJoin()
 					int index = existChannel(to_Upper(channelName));
 					if (index != -1 && !Server::isMember(Server::_channels[index].getChannelName(), this->getNickName()))
 					{
-						if (Server::_channels[index]._channelMode._inviteOnly)
+						if(isInvited(Server::_channels[index].getChannelName()))
+						{
+							addToExistChannel(index, channelName);
+							int c = retInviteChan(Server::_channels[index].getChannelName());
+							channelInvite.erase(channelInvite.begin() + c);
+						}
+						else if (Server::_channels[index]._channelMode._inviteOnly)
 						{
 							if(isInvited(Server::_channels[index].getChannelName()))
 							{

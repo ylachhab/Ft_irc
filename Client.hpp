@@ -87,6 +87,7 @@ class Client
 		void executeBotChannel();
 		void executeBot();
 		int retInviteChan(std::string channel);
+		// void addInvitedClient(int index, std::string channelName);
 		//----------------Command---------------
 		void executePass();
 		void executeNick();
