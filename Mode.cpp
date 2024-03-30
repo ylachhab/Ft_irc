@@ -207,7 +207,7 @@ void Client::Mode() {
 					}
 					break;
 				case  'k':
-					if (i + 1 < vec.size() && !vec[i + 1].empty() && vec[i + 1][0] != ' ' && vec[i + 1][0] != '\t') {
+					if (i + 1 < vec.size() && !vec[i + 1].empty() && vec[i + 1][0] != ' ' && vec[i + 1][0] != '\t' && Server::IsValidChar(vec[i + 1])) {
 						size_t start = vec[i + 1].find_first_of(" \t");
 						if (start != std::string::npos)
 							vec[i + 1] = vec[i + 1].substr(0, start);
@@ -216,7 +216,7 @@ void Client::Mode() {
 					}
 					else
 					{
-						if (vec[i + 1][0] == ' ' || vec[i + 1][0] == '\t')
+						if (i + 1 < vec.size() && (vec[i + 1][0] == ' ' || vec[i + 1][0] == '\t' || !Server::IsValidChar(vec[i + 1])))
 							vec.erase(vec.begin() + i + 1);
 						sendTo(":" + Server::_hostname + " 461 " + this->_nickName + " MODE " + sign + "k " + ":Not enough parameters\r\n");
 					}
