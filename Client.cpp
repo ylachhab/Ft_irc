@@ -220,7 +220,7 @@ void Client::RecvClient(pollfd& pfd, bool &flag) {
 		error = true;
 	}
 	else {
-		if (buf[std::strlen(buf) - 1] != '\n')
+		if (std::strlen(buf) && buf[std::strlen(buf) - 1] != '\n')
 		{
 			flag = true;
 			return ;

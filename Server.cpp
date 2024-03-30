@@ -252,6 +252,10 @@ Server::Server(std::string port, std::string password) {
 		std::exit(1);
 	}
 	this->port = port;
+	if (std::atol(port.c_str()) <= 0 || std::atol(port.c_str()) > 65535) {
+		std::cout << "Error in port" << std::endl;
+		std::exit(1);
+	}
 	this->password = password;
 	int sockfd = get_socket();
 	if (sockfd == -1)
