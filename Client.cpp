@@ -9,6 +9,7 @@ Client::Client()
 	this->_nick = false;
 	this->_user = false;
 	this->_nickName = "*";
+	this->sendMsg = false;
 }
 
 Client::Client(const Client& obj)

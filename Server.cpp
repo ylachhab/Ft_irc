@@ -129,6 +129,22 @@ int Server:: retChannelMember(std::string client, int index)
 	return 0;
 }
 
+void Server::setAllSendOff()
+{
+	for (size_t i = 0; i < Server::cObjs.size(); i++)
+		Server::cObjs[i].sendMsg = false;
+}
+
+int Server::IsValidChar(std::string str)
+{
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		if(!isprint(str[i]))
+			return 0;
+	}
+	return 1;
+}
+
 int isNumber(std::string str)
 {
 	for (size_t j = 0; j < str.length(); j++)
@@ -296,6 +312,9 @@ Server::Server(std::string port, std::string password) {
 						{
 							Server::_channels[j].eraseMember(cObjs[i - 1].getNickName());
 							Server::_channels[j].eraseOperator(cObjs[i - 1].getFd());
+						}
+						for (size_t j = 0; j < Server::_channels.size(); j++)
+						{
 							if (Server::_channels[j].getChannel().empty())
 								Server::_channels.erase(Server::_channels.begin() + j);
 						}

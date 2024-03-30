@@ -50,6 +50,8 @@ class Server
 		static int retChannel(std::string channel);
 		static int retClient(std::string client);
 		static int retChannelMember(std::string client, int index);
+		static void setAllSendOff();
+		static int IsValidChar(std::string str);
 		static std::string concatenateClients(Channel& vec);
 };
 

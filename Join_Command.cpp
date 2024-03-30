@@ -133,7 +133,7 @@ void Client::executeJoin()
 {
 	if (this->_registred)
 	{
-		if (vec.size())
+		if (vec.size() && !vec[0].empty() && Server::IsValidChar(vec[0]) && Server::IsValidChar(vec[1]))
 		{
 			std::string tmp = removeExtraChar(vec[0], ',');
 			std::vector<std::pair<std::string, std::string> > v = splitChannels(tmp);

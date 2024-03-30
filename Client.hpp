@@ -40,6 +40,7 @@ class Client
 		char		clientIp[INET_ADDRSTRLEN];
 	public:
 		bool error;
+		bool sendMsg;
 		//Orthodox canonical class form
 		Client();
 		Client(const Client& obj);

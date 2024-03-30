@@ -7,7 +7,7 @@
 
 bool specialCharacter(std::string &str)
 {
-	std::string sp = "-[]\\'^{}";
+	std::string sp = "-[]\\'^{}_";
 	std::string num = "0123456789";
 	if (num.find(str[0]) != std::string::npos)
 		return true;
@@ -35,8 +35,11 @@ void Client::sendToAll(std::string msg, std::string channel) {
 	for (size_t i = 0; i < Server::cObjs.size(); i++)
 	{
 		if (Server::isMember(channel, Server::cObjs[i].getNickName()) 
-			&& Server::cObjs[i].getNickName() != this->_nickName)
+			&& Server::cObjs[i].getNickName() != this->_nickName && !Server::cObjs[i].sendMsg)
+		{
 			send(Server::cObjs[i].getFd(), msg.c_str(), msg.length(), 0);
+			Server::cObjs[i].sendMsg = true;
+		}
 	}
 }
 /******************* PASS Commande **********************/
@@ -46,7 +49,7 @@ void Client::executePass()
 		sendTo(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
 	else
 	{
-		if (vec.size() != 0)
+		if (vec.size() != 0 && !vec[0].empty())
 		{
 			this->_pass = true;
 			if (vec[0].compare(this->_password) == 0)
@@ -108,6 +111,7 @@ void Client::executeNick()
 						}
 					}
 					sendTo(msg);
+					Server::setAllSendOff();
 					this->_nickName = vec[0];
 				}
 				isRegesterd();
@@ -127,9 +131,10 @@ void Client::executeUser()
 {
 	if (this->_registred)
 		sendTo(ERR_ALREADYREGISTERED(this->_nickName, Server::_hostname));
-	if (this->_pass && this->_authenticated)
+	else if (this->_pass && this->_authenticated)
 	{
-		if (vec.size() >= 4)
+		if (vec.size() >= 4 && !vec[0].empty() && !vec[3].empty()
+			&& Server::IsValidChar(vec[0]) && Server::IsValidChar(vec[3]))
 		{
 			vec[0] = vec[0].substr(0, 10);
 			vec[3] = vec[3].substr(0, 20);
@@ -157,8 +162,7 @@ void Client::executeQuit()
 			std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " QUIT " + ":Quit\r\n";
 			sendToAll(msg, Server::_channels[j].getChannelName());
 		}
-		Server::_channels[j].eraseMember(this->_nickName);
-		Server::_channels[j].eraseOperator(this->_fd);
 	}
+	Server::setAllSendOff();
 	error = true;
 }
