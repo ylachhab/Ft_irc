@@ -121,12 +121,14 @@ void Client::parceCommand() {
 		size_t start = tmp.find_first_not_of(" \t");
 		if (start != std::string::npos)
 			tmp = tmp.substr(start);
-		size_t end = tmp.find_first_of("\r");
+		size_t end = tmp.find("\r\n");
 		if (end != std::string::npos)
 		{
 			str = tmp.substr(0, end);
-			tmp = tmp.substr(end + 2, tmp.length() - (end + 2));
+			tmp = tmp.substr(end + 2);
 		}
+		else
+			break ;
 		size_t index = str.find_first_of(" \t");
 		if (index != std::string::npos)
 		{
