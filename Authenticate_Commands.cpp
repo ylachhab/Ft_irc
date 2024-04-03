@@ -159,7 +159,11 @@ void Client::executeQuit()
 	{
 		if (Server::_channels[j].isAMember(this->_nickName))
 		{
-			std::string msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " QUIT " + ":Quit\r\n";
+			std::string msg;
+			if (vec.empty())
+				msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " QUIT " + ":Quit\r\n";
+			else
+				msg = ":" + this->_nickName + "!~" + this->_userName + "@" + this->clientIp + " QUIT :" +  vec[vec.size() - 1] + "\r\n";
 			sendToAll(msg, Server::_channels[j].getChannelName());
 		}
 	}

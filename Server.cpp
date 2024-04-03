@@ -198,13 +198,8 @@ int Server::get_socket() {
 		socfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
 		if (socfd < 0)
 			continue;
-		if (setsockopt(socfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))== -1)
-		{
-			std::cout << "Error in setsockopt" << std::endl;
-			close (socfd);
-			std::exit(1);
-		}
-		if (setsockopt(socfd, SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof(int))== -1)
+		if (setsockopt(socfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))== -1
+			|| setsockopt(socfd, SOL_SOCKET, SO_NOSIGPIPE, &yes, sizeof(int))== -1)
 		{
 			std::cout << "Error in setsockopt" << std::endl;
 			close (socfd);
